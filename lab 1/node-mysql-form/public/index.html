@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Node MySQL Form</title>
+</head>
+<body>
+    <h2>Save Data</h2>
+    <form action="/submit" method="POST">
+        <input type="text" name="user_id" placeholder="Enter ID" required><br><br>
+        <input type="email" name="email" placeholder="Enter Email" required><br><br>
+        <input type="text" name="phone" placeholder="Enter Phone" required><br><br>
+        <button type="submit">Save</button>
+    </form>
+    <hr>
+    <h2>Users</h2>
+    <div id="users"></div>
+
+    <script>
+    async function loadUsers(){
+        const res = await fetch('/users');
+        const users = await res.json();
+        const container = document.getElementById('users');
+        if(!users.length){ container.innerHTML = '<p>No users yet</p>'; return; }
+        container.innerHTML = users.map(u => `
+            <div style="border:1px solid #ccc;padding:8px;margin:6px">
+                <strong>ID:</strong> ${u.user_id} <br>
+                <strong>Email:</strong> ${u.email} <br>
+                <strong>Phone:</strong> ${u.phone} <br>
+                <button data-id="${u.id}" class="edit">Edit</button>
+                <button data-id="${u.id}" class="del">Delete</button>
+            </div>
+        `).join('');
+        document.querySelectorAll('.del').forEach(b=>b.onclick=async e=>{
+            if(!confirm('Delete this user?')) return;
+            const id = e.target.dataset.id;
+            await fetch('/users/'+id, { method: 'DELETE' });
+            loadUsers();
+        });
+        document.querySelectorAll('.edit').forEach(b=>b.onclick=async e=>{
+            const id = e.target.dataset.id;
+            const userRes = await fetch('/users/'+id);
+            const u = await userRes.json();
+            const newUserId = prompt('user_id', u.user_id);
+            if(newUserId===null) return;
+            const newEmail = prompt('email', u.email);
+            if(newEmail===null) return;
+            const newPhone = prompt('phone', u.phone);
+            if(newPhone===null) return;
+            await fetch('/users/'+id, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: newUserId, email: newEmail, phone: newPhone })
+            });
+            loadUsers();
+        });
+    }
+    // hijack form to use fetch so page doesn't reload
+    document.querySelector('form').addEventListener('submit', async function(e){
+        e.preventDefault();
+        const form = e.target;
+        const data = new FormData(form);
+        const obj = Object.fromEntries(data.entries());
+        await fetch('/submit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(obj) });
+        form.reset();
+        loadUsers();
+    });
+    loadUsers();
+    </script>
+</body>
+</html>
