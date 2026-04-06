@@ -1,0 +1,13 @@
+{
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix client\" \"npm run dev --prefix server\"",
+    "build": "npm run build --prefix client",
+    "start": "concurrently \"npm run start --prefix client\" \"npm run start --prefix server\""
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.101.1"
+  }
+}
