@@ -103,7 +103,7 @@ function LectureCard({ lecture, index, darkMode }) {
 export default function HomePage() {
   const dispatch = useDispatch();
   const { darkMode } = useOutletContext();
-  const { lectures, loading } = useSelector((s) => s.lectures);
+  const { lectures, loading, error } = useSelector((s) => s.lectures);
   const progress = getProgress();
   const completedCount = Object.values(progress).filter(Boolean).length;
 
@@ -226,6 +226,20 @@ export default function HomePage() {
             {[...Array(6)].map((_, i) => (
               <div key={i} className={`h-56 rounded-xl animate-pulse ${darkMode ? 'bg-slate-800' : 'bg-slate-100'}`} />
             ))}
+          </div>
+        ) : error ? (
+          <div className={`text-center py-16 rounded-xl border-2 border-dashed
+                           ${darkMode ? 'border-red-700 bg-red-900/20' : 'border-red-300 bg-red-50'}`}>
+            <svg className="w-10 h-10 mx-auto mb-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4v2m0-10a9 9 0 110 18 9 9 0 010-18z" />
+            </svg>
+            <p className="text-sm font-semibold text-red-600 dark:text-red-400 mb-2">Failed to load lectures</p>
+            <p className={`text-xs ${darkMode ? 'text-red-400' : 'text-red-600'}`}>
+              {error || 'Unable to connect to API. Please check your backend configuration.'}
+            </p>
+            <p className={`text-xs mt-3 ${darkMode ? 'text-slate-400' : 'text-slate-600'}`}>
+              Set <code className="bg-slate-900/30 px-2 py-1 rounded text-xs">VITE_API_URL</code> environment variable in Vercel
+            </p>
           </div>
         ) : lectures.length === 0 ? (
           <div className={`text-center py-16 rounded-xl border-2 border-dashed
