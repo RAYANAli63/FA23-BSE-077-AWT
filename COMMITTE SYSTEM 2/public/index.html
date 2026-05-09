@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Money Committee System — Premium ROSCA Platform</title>
+<meta name="description" content="Modern fintech committee management platform for ROSCA and Bachat savings groups">
+<link rel="stylesheet" href="css/variables.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+<div id="toast-container" class="toast-container"></div>
+
+<!-- ==================== LANDING PAGE ==================== -->
+<div id="page-landing" class="view-page landing-page">
+  <nav class="landing-nav" id="landing-nav">
+    <div class="nav-logo"><div class="logo-icon">M</div> Money Committee</div>
+    <div class="nav-links">
+      <a href="#features" onclick="scrollToSection('features')">Features</a>
+      <a href="#how" onclick="scrollToSection('how-it-works')">How It Works</a>
+      <a href="#testimonials" onclick="scrollToSection('testimonials')">Testimonials</a>
+      <a href="#faq" onclick="scrollToSection('faq')">FAQ</a>
+    </div>
+    <div class="nav-cta">
+      <button class="theme-toggle" id="landing-theme-btn" onclick="toggleTheme()">🌙</button>
+      <button class="btn btn-outline btn-sm" onclick="showAuth('member')">Member Login</button>
+      <button class="btn btn-primary btn-sm" onclick="showAuth('admin')">Admin Login</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <div class="hero-badge">🚀 Trusted by 500+ committees across Pakistan</div>
+        <h1>Start Saving <span class="highlight">Smartly</span> Together</h1>
+        <p>The most powerful digital platform for managing your ROSCA committees. Track payments, manage members, and automate payouts with confidence.</p>
+        <div class="hero-buttons">
+          <button class="btn btn-primary btn-xl" onclick="showAuth('admin')">🚀 Get Started Free</button>
+          <button class="btn btn-outline btn-xl" onclick="scrollToSection('how-it-works')">Learn More →</button>
+        </div>
+        <div class="hero-stats">
+          <div><div class="h-stat-value">500+</div><div class="h-stat-label">Active Committees</div></div>
+          <div><div class="h-stat-value">₨12M+</div><div class="h-stat-label">Money Managed</div></div>
+          <div><div class="h-stat-value">5,000+</div><div class="h-stat-label">Happy Members</div></div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+            <div><div style="font-size:13px;color:var(--text-tertiary)">Total Savings</div><div style="font-size:28px;font-weight:800;font-family:var(--font-display);color:var(--primary)">PKR 2,450,000</div></div>
+            <div class="badge badge-success">↑ 12.5%</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+            <div style="background:var(--bg-tertiary);padding:14px;border-radius:12px"><div style="font-size:11px;color:var(--text-tertiary)">Active Members</div><div style="font-size:22px;font-weight:800;font-family:var(--font-display)">248</div></div>
+            <div style="background:var(--bg-tertiary);padding:14px;border-radius:12px"><div style="font-size:11px;color:var(--text-tertiary)">This Month</div><div style="font-size:22px;font-weight:800;font-family:var(--font-display);color:var(--secondary)">PKR 89K</div></div>
+          </div>
+          <div style="display:flex;gap:8px;flex-direction:column">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--success-100);border-radius:8px;font-size:13px"><span>Ahmad Ali — Paid ✅</span><span class="fw-600" style="color:var(--success)">PKR 5,000</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--warning-100);border-radius:8px;font-size:13px"><span>Sara Khan — Pending ⏳</span><span class="fw-600" style="color:var(--warning)">PKR 5,000</span></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--info-100);border-radius:8px;font-size:13px"><span>Bilal — Payout 💰</span><span class="fw-600" style="color:var(--info)">PKR 25,000</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing-section" id="features">
+    <div class="section-header"><div class="section-badge">✨ Features</div><h2>Everything You Need to Manage Committees</h2><p>Powerful tools designed for seamless savings management</p></div>
+    <div class="features-grid stagger">
+      <div class="feature-card"><div class="feature-icon" style="background:var(--primary-100);color:var(--primary)">👥</div><h3>Member Management</h3><p>Add, manage, and track all committee members with complete profiles and payment history.</p></div>
+      <div class="feature-card"><div class="feature-icon" style="background:var(--secondary-100);color:var(--secondary)">💰</div><h3>Automated Payouts</h3><p>Set payout schedules, track turns, and automate distribution with transparent tracking.</p></div>
+      <div class="feature-card"><div class="feature-icon" style="background:var(--accent-100);color:var(--accent)">📊</div><h3>Real-time Analytics</h3><p>Beautiful charts and reports showing collection rates, revenue, and committee health.</p></div>
+      <div class="feature-card"><div class="feature-icon" style="background:var(--warning-100);color:var(--warning)">🔔</div><h3>Smart Reminders</h3><p>Automatic payment reminders and notifications keep everyone on track.</p></div>
+      <div class="feature-card"><div class="feature-icon" style="background:var(--danger-100);color:var(--danger)">🔒</div><h3>Bank-grade Security</h3><p>Enterprise security with encrypted data, role-based access, and audit logging.</p></div>
+      <div class="feature-card"><div class="feature-icon" style="background:var(--info-100);color:var(--info)">📱</div><h3>Mobile Responsive</h3><p>Access your committee dashboard from any device — phone, tablet, or desktop.</p></div>
+    </div>
+  </section>
+
+  <section class="landing-section" id="how-it-works" style="background:var(--bg-tertiary);margin:0 -40px;padding-left:40px;padding-right:40px">
+    <div style="max-width:1200px;margin:0 auto">
+      <div class="section-header"><div class="section-badge">🔄 Process</div><h2>How It Works</h2><p>Get started in 4 simple steps</p></div>
+      <div class="steps-grid stagger">
+        <div class="step-card"><div class="step-num">1</div><h3>Create Account</h3><p>Sign up as admin and set up your organization profile</p></div>
+        <div class="step-card"><div class="step-num">2</div><h3>Add Members</h3><p>Invite or register all committee participants</p></div>
+        <div class="step-card"><div class="step-num">3</div><h3>Create Committee</h3><p>Set monthly amount, duration, and assign payout turns</p></div>
+        <div class="step-card"><div class="step-num">4</div><h3>Track & Manage</h3><p>Collect payments, distribute payouts, view reports</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing-section" id="testimonials">
+    <div class="section-header"><div class="section-badge">💬 Reviews</div><h2>Loved by Committee Managers</h2><p>See what our users say about the platform</p></div>
+    <div class="testimonials-grid stagger">
+      <div class="testimonial-card"><div class="stars">⭐⭐⭐⭐⭐</div><p>"This system transformed how we manage our family committee. No more spreadsheets!"</p><div class="author"><div class="avatar sm">AK</div><div><div class="author-name">Amna Khalid</div><div class="author-role">Family Committee Admin</div></div></div></div>
+      <div class="testimonial-card"><div class="stars">⭐⭐⭐⭐⭐</div><p>"Transparent, easy to use, and my members love the payment tracking feature."</p><div class="author"><div class="avatar sm">UI</div><div><div class="author-name">Usman Iqbal</div><div class="author-role">Office Pool Manager</div></div></div></div>
+      <div class="testimonial-card"><div class="stars">⭐⭐⭐⭐⭐</div><p>"The analytics and reports help me manage 5 committees simultaneously without stress."</p><div class="author"><div class="avatar sm">FZ</div><div><div class="author-name">Fatima Zahra</div><div class="author-role">Community Organizer</div></div></div></div>
+    </div>
+  </section>
+
+  <section class="landing-section" id="faq">
+    <div class="section-header"><div class="section-badge">❓ FAQ</div><h2>Frequently Asked Questions</h2></div>
+    <div class="faq-list">
+      <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>What is a ROSCA / Bachat Committee?</span><span class="faq-icon">+</span></button><div class="faq-answer">A ROSCA (Rotating Savings and Credit Association) or Bachat Committee is a traditional savings system where a group of people contribute a fixed amount monthly. Each month, one member receives the total collected pool. It's a popular savings method across Pakistan and South Asia.</div></div>
+      <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>Is my financial data secure?</span><span class="faq-icon">+</span></button><div class="faq-answer">Absolutely. We use bank-grade encryption, secure authentication, and role-based access controls. All data is stored securely and backed up regularly.</div></div>
+      <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>Can I manage multiple committees?</span><span class="faq-icon">+</span></button><div class="faq-answer">Yes! You can create and manage unlimited committees simultaneously with full tracking and analytics for each one.</div></div>
+      <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)"><span>Is there a mobile app?</span><span class="faq-icon">+</span></button><div class="faq-answer">The platform is fully responsive and works perfectly on mobile browsers. A dedicated mobile app is coming soon!</div></div>
+    </div>
+  </section>
+
+  <footer class="landing-footer">
+    <div class="footer-grid">
+      <div><div style="display:flex;align-items:center;gap:10px;margin-bottom:16px"><div class="logo-icon" style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;color:white;font-weight:800">M</div><span style="color:white;font-weight:700;font-size:16px">Money Committee System</span></div><p style="font-size:13px;line-height:1.7;max-width:300px">The most trusted digital platform for managing ROSCA committees and savings groups in Pakistan.</p></div>
+      <div><h3>Product</h3><a href="#">Features</a><a href="#">Pricing</a><a href="#">Security</a><a href="#">API</a></div>
+      <div><h3>Company</h3><a href="#">About</a><a href="#">Blog</a><a href="#">Careers</a><a href="#">Contact</a></div>
+      <div><h3>Legal</h3><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Cookies</a></div>
+    </div>
+    <div class="footer-bottom">© 2025 Money Committee System. All rights reserved.</div>
+  </footer>
+</div>
+
+<!-- ==================== AUTH PAGE ==================== -->
+<div id="page-auth" class="view-page hidden auth-page">
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-logo"><div class="logo-circle">💰</div><h1 id="auth-title">Admin Login</h1><p>Sign in to Money Committee System</p></div>
+      <input type="hidden" id="auth-role-input" value="admin">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="this.parentElement.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));this.classList.add('active');document.getElementById('login-form').classList.remove('hidden');document.getElementById('signup-form').classList.add('hidden')">Sign In</button>
+        <button class="auth-tab" onclick="this.parentElement.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));this.classList.add('active');document.getElementById('signup-form').classList.remove('hidden');document.getElementById('login-form').classList.add('hidden')">Sign Up</button>
+      </div>
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group"><label class="form-label">Email Address</label><div class="input-group"><span class="input-icon">📧</span><input class="form-input" type="email" id="login-email" placeholder="admin@committee.pk" value="admin@committee.pk" required></div></div>
+        <div class="form-group"><label class="form-label">Password</label><div class="input-group"><span class="input-icon">🔒</span><input class="form-input" type="password" id="login-password" placeholder="••••••••" value="admin123" required><button type="button" class="input-action" onclick="togglePasswordVisibility('login-password')">👁</button></div></div>
+        <div class="auth-options"><label><input type="checkbox" checked> Remember me</label><a href="#" onclick="showToast('Password reset link sent!','success')">Forgot password?</a></div>
+        <button class="btn btn-primary w-full btn-lg" type="submit" id="login-btn">Sign In</button>
+      </form>
+      <form id="signup-form" class="hidden" onsubmit="handleSignup(event)">
+        <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" type="text" id="signup-name" placeholder="Your full name" required></div>
+        <div class="form-group"><label class="form-label">Email Address</label><input class="form-input" type="email" id="signup-email" placeholder="you@example.com" required></div>
+        <div class="form-group"><label class="form-label">Password</label><div class="input-group"><input class="form-input" type="password" id="signup-password" placeholder="Min 8 characters" required><button type="button" class="input-action" onclick="togglePasswordVisibility('signup-password')">👁</button></div></div>
+        <button class="btn btn-primary w-full btn-lg" type="submit">Create Account</button>
+      </form>
+      <div class="auth-footer"><a href="#" onclick="showPage('landing')">← Back to Homepage</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== APP SHELL ==================== -->
+<div id="app-shell" class="hidden app-layout">
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeMobileSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="app-sidebar">
+    <div class="sidebar-brand"><div class="brand-icon">M</div><div class="brand-text"><h2>Money Committee</h2><span>System v2.0</span></div></div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section"><div class="sidebar-section-title">Main</div>
+        <button class="nav-link active" data-page="admin-dashboard" onclick="showPage('admin-dashboard')"><span class="nav-icon">📊</span>Dashboard</button>
+        <button class="nav-link" data-page="members" onclick="showPage('members')"><span class="nav-icon">👥</span>Members<span class="nav-badge">8</span></button>
+        <button class="nav-link" data-page="committees" onclick="showPage('committees')"><span class="nav-icon">🏦</span>Committees</button>
+      </div>
+      <div class="sidebar-section"><div class="sidebar-section-title">Finance</div>
+        <button class="nav-link" data-page="payments" onclick="showPage('payments')"><span class="nav-icon">💳</span>Payments</button>
+        <button class="nav-link" data-page="transactions" onclick="showPage('transactions')"><span class="nav-icon">📋</span>Transactions</button>
+        <button class="nav-link" data-page="reports" onclick="showPage('reports')"><span class="nav-icon">📈</span>Reports</button>
+      </div>
+      <div class="sidebar-section"><div class="sidebar-section-title">System</div>
+        <button class="nav-link" data-page="notifications" onclick="showPage('notifications')"><span class="nav-icon">🔔</span>Notifications<span class="nav-badge">3</span></button>
+        <button class="nav-link" data-page="settings" onclick="showPage('settings')"><span class="nav-icon">⚙️</span>Settings</button>
+      </div>
+    </nav>
+    <div class="sidebar-footer"><div class="sidebar-user" onclick="showPage('profile')"><div class="avatar sm" id="sidebar-avatar">AU</div><div class="user-info"><div class="user-name" id="sidebar-user-name">Admin User</div><div class="user-role" id="sidebar-user-role">Administrator</div></div></div></div>
+  </aside>
+
+  <!-- MAIN AREA -->
+  <div class="app-content">
+    <!-- NAVBAR -->
+    <header class="navbar">
+      <div class="navbar-left">
+        <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">☰</button>
+        <div class="breadcrumb" id="breadcrumb"><span>Home</span><span>/</span><span class="current">Dashboard</span></div>
+      </div>
+      <div class="navbar-right">
+        <div class="search-box"><span class="search-icon">🔍</span><input type="text" placeholder="Search..." id="global-search"></div>
+        <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleTheme()">🌙</button>
+        <div class="dropdown" style="position:relative">
+          <button class="nav-action-btn" onclick="toggleNotifPanel()">🔔<span class="notif-dot"></span></button>
+          <div class="notif-panel" id="notif-dropdown">
+            <div class="notif-panel-header"><h3>Notifications</h3><button class="btn btn-sm btn-ghost">Mark all read</button></div>
+            <div id="navbar-notif-list"></div>
+          </div>
+        </div>
+        <div class="dropdown" style="position:relative">
+          <div class="navbar-profile" onclick="toggleProfileDropdown()">
+            <div class="avatar sm" id="navbar-avatar">AU</div>
+            <div><div class="profile-name" id="user-display-name">Admin User</div><div class="profile-role" id="user-display-role">Administrator</div></div>
+          </div>
+          <div class="dropdown-menu" id="profile-dropdown">
+            <button class="dropdown-item" onclick="showPage('profile');closeDropdowns()">👤 My Profile</button>
+            <button class="dropdown-item" onclick="showPage('settings');closeDropdowns()">⚙️ Settings</button>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item" onclick="logout()" style="color:var(--danger)">🚪 Logout</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="app-main" id="app-main-content"></main>
+  </div>
+</div>
+
+<!-- ==================== MODALS ==================== -->
+<div class="modal-overlay" id="member-modal"><div class="modal"><div class="modal-header"><h3 class="modal-title">Add New Member</h3><button class="modal-close" onclick="closeMemberModal()">✕</button></div><div id="member-form-alert"></div>
+  <div class="form-group"><label class="form-label">Full Name *</label><input class="form-input" id="member-name" placeholder="e.g. Ahmad Ali"></div>
+  <div class="form-row"><div class="form-group"><label class="form-label">Phone *</label><input class="form-input" id="member-phone" placeholder="03XX-XXXXXXX"></div><div class="form-group"><label class="form-label">CNIC</label><input class="form-input" id="member-cnic" placeholder="XXXXX-XXXXXXX-X"></div></div>
+  <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="member-email" type="email" placeholder="email@example.com"></div>
+  <div class="form-actions"><button class="btn btn-outline" onclick="closeMemberModal()">Cancel</button><button class="btn btn-primary" onclick="saveMember()">Save Member</button></div>
+</div></div>
+
+<div class="modal-overlay" id="committee-modal"><div class="modal"><div class="modal-header"><h3 class="modal-title">Create Committee</h3><button class="modal-close" onclick="closeCommitteeModal()">✕</button></div><div id="committee-form-alert"></div>
+  <div class="form-group"><label class="form-label">Committee Name *</label><input class="form-input" id="c-name" placeholder="e.g. Family Committee 2025"></div>
+  <div class="form-row"><div class="form-group"><label class="form-label">Monthly Amount (PKR) *</label><input class="form-input" type="number" id="c-amount" placeholder="5000"></div><div class="form-group"><label class="form-label">No. of Members *</label><input class="form-input" type="number" id="c-total-members" placeholder="10" min="2" max="24" onchange="generateMemberSlots()"></div></div>
+  <div class="form-group"><label class="form-label">Start Date *</label><input class="form-input" type="date" id="c-start"></div>
+  <div class="form-group"><label class="form-label">Assign Members</label><div id="member-slots" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px"></div></div>
+  <div class="form-actions"><button class="btn btn-outline" onclick="closeCommitteeModal()">Cancel</button><button class="btn btn-primary" onclick="saveCommittee()">Create Committee</button></div>
+</div></div>
+
+<script src="js/api.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/app.js"></script>
+<script src="js/pages.js"></script>
+</body>
+</html>
