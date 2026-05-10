@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>کمیٹی Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#06090f;--sur:#0d1117;--card:#111822;--card2:#151f2e;--bor:#1c2a3a;--bor2:#243040;--ac:#3b82f6;--ac2:#60a5fa;--acd:rgba(59,130,246,.12);--gold:#f59e0b;--goldd:rgba(245,158,11,.12);--green:#10b981;--greend:rgba(16,185,129,.12);--red:#ef4444;--redd:rgba(239,68,68,.12);--pur:#8b5cf6;--purd:rgba(139,92,246,.12);--tx:#e2e8f0;--tx2:#94a3b8;--tx3:#475569;--fh:'Cinzel',serif;--f:'DM Sans',sans-serif;--fm:'JetBrains Mono',monospace;--r:14px;--r2:10px;--r3:8px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
+.ascreen{display:none;align-items:center;justify-content:center;min-height:100vh;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(59,130,246,.15),transparent 60%),var(--bg)}
+.ascreen.on{display:flex}
+.abox{width:430px;max-width:95vw;background:var(--card);border:1px solid var(--bor);border-radius:24px;padding:42px 38px;animation:fu .4s ease}
+.alogo{text-align:center;margin-bottom:28px}
+.alogo h1{font-family:var(--fh);font-size:1.9rem;color:var(--ac);letter-spacing:2px}
+.alogo p{font-size:.7rem;color:var(--tx3);font-family:var(--fm);letter-spacing:2px;margin-top:4px}
+.abadge{display:inline-block;background:var(--acd);border:1px solid rgba(59,130,246,.3);color:var(--ac2);padding:3px 12px;border-radius:20px;font-size:.67rem;font-family:var(--fm);margin-top:7px}
+.atabs{display:flex;background:var(--sur);border-radius:var(--r2);padding:3px;margin-bottom:22px}
+.atab{flex:1;padding:9px;border:none;background:none;color:var(--tx3);cursor:pointer;font-family:var(--f);font-size:.82rem;font-weight:500;border-radius:8px;transition:all .2s}
+.atab.on{background:var(--ac);color:#fff}
+.ahint{background:var(--acd);border:1px solid rgba(59,130,246,.2);border-radius:var(--r3);padding:10px 12px;font-size:.75rem;color:var(--ac2);font-family:var(--fm);margin-bottom:16px;line-height:1.6}
+.alink{color:var(--ac2);cursor:pointer;text-decoration:underline;font-size:.82rem}
+#app{display:none}
+.layout{display:flex;min-height:100vh}
+.sb{width:252px;min-height:100vh;position:fixed;left:0;top:0;bottom:0;background:var(--sur);border-right:1px solid var(--bor);display:flex;flex-direction:column;z-index:200}
+.sbh{padding:20px 17px 16px;border-bottom:1px solid var(--bor)}
+.sbh h2{font-family:var(--fh);font-size:1.2rem;color:var(--ac)}
+.sbh p{font-size:.63rem;color:var(--tx3);font-family:var(--fm);letter-spacing:2px;margin-top:2px}
+.sbu{margin:12px 10px 0;padding:10px;background:var(--acd);border:1px solid rgba(59,130,246,.2);border-radius:var(--r2)}
+.sbu .un{font-weight:600;font-size:.875rem}
+.sbu .ur{font-size:.67rem;color:var(--ac2);font-family:var(--fm);letter-spacing:1px;margin-top:2px}
+.nav{flex:1;padding:9px 7px;overflow-y:auto}
+.nsec{font-size:.61rem;color:var(--tx3);font-family:var(--fm);letter-spacing:2px;text-transform:uppercase;padding:7px 11px 3px;margin-top:5px}
+.ni{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:var(--r2);cursor:pointer;font-size:.875rem;font-weight:500;color:var(--tx2);transition:all .2s;border:none;background:none;width:100%;text-align:left;margin-bottom:2px}
+.ni:hover{background:var(--acd);color:var(--tx)}
+.ni.on{background:var(--acd);color:var(--ac);border-left:3px solid var(--ac)}
+.ni .ico{font-size:.95rem;width:19px;text-align:center;flex-shrink:0}
+.sbf{padding:11px 13px;border-top:1px solid var(--bor)}
+.btnlo{width:100%;padding:9px;background:var(--redd);color:var(--red);border:1px solid rgba(239,68,68,.3);border-radius:var(--r2);cursor:pointer;font-family:var(--f);font-size:.875rem;font-weight:600;transition:all .2s}
+.btnlo:hover{background:rgba(239,68,68,.25)}
+.main{margin-left:252px;min-height:100vh;padding:26px 28px}
+.pg{display:none}.pg.on{display:block;animation:fu .3s ease}
+.pgh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:9px}
+.pgt{font-family:var(--fh);font-size:1.65rem;letter-spacing:1px}
+.pgs{font-size:.67rem;color:var(--tx3);font-family:var(--fm);letter-spacing:1px;margin-top:2px}
+.card{background:var(--card);border:1px solid var(--bor);border-radius:var(--r);padding:20px}
+.ct{font-size:.92rem;font-weight:600;margin-bottom:14px}
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:12px;margin-bottom:20px}
+.st{background:var(--card);border:1px solid var(--bor);border-radius:var(--r);padding:17px;position:relative;overflow:hidden;transition:all .2s}
+.st:hover{border-color:var(--ac);transform:translateY(-2px)}
+.stb{position:absolute;top:0;left:0;right:0;height:2px}
+.stb.bl{background:linear-gradient(90deg,var(--ac),transparent)}
+.stb.go{background:linear-gradient(90deg,var(--gold),transparent)}
+.stb.gr{background:linear-gradient(90deg,var(--green),transparent)}
+.stb.re{background:linear-gradient(90deg,var(--red),transparent)}
+.stb.pu{background:linear-gradient(90deg,var(--pur),transparent)}
+.sl{font-size:.64rem;color:var(--tx3);font-family:var(--fm);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.sv{font-size:1.65rem;font-weight:700;font-family:var(--fh)}
+.sv.bl{color:var(--ac)}.sv.go{color:var(--gold)}.sv.gr{color:var(--green)}.sv.re{color:var(--red)}.sv.pu{color:var(--pur)}
+.ss{font-size:.69rem;color:var(--tx3);margin-top:2px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead tr{border-bottom:1px solid var(--bor)}
+th{padding:9px 12px;text-align:left;font-size:.62rem;color:var(--tx3);font-family:var(--fm);letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
+td{padding:11px 12px;font-size:.875rem;border-bottom:1px solid rgba(28,42,58,.5)}
+tbody tr:hover{background:rgba(59,130,246,.04)}
+tbody tr:last-child td{border-bottom:none}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:.62rem;font-family:var(--fm);font-weight:600}
+.bg{background:var(--greend);color:var(--green);border:1px solid rgba(16,185,129,.3)}
+.br{background:var(--redd);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+.bo{background:var(--goldd);color:var(--gold);border:1px solid rgba(245,158,11,.3)}
+.bb{background:var(--acd);color:var(--ac2);border:1px solid rgba(59,130,246,.3)}
+.bp{background:var(--purd);color:var(--pur);border:1px solid rgba(139,92,246,.3)}
+.btn{padding:9px 17px;border-radius:var(--r2);border:none;cursor:pointer;font-family:var(--f);font-size:.875rem;font-weight:600;transition:all .2s}
+.btnp{background:var(--ac);color:#fff}.btnp:hover{background:var(--ac2)}
+.btno{background:transparent;color:var(--tx);border:1px solid var(--bor)}.btno:hover{border-color:var(--ac);color:var(--ac)}
+.btns{padding:5px 11px;font-size:.75rem;border-radius:var(--r3)}
+.btnd{background:var(--redd);color:var(--red);border:1px solid rgba(239,68,68,.3)}.btnd:hover{background:rgba(239,68,68,.25)}
+.btnsu{background:var(--greend);color:var(--green);border:1px solid rgba(16,185,129,.3)}.btnsu:hover{background:rgba(16,185,129,.25)}
+.fg{margin-bottom:13px}
+label.lb{display:block;font-size:.63rem;color:var(--tx3);font-family:var(--fm);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--bor2);border-radius:var(--r2);padding:10px 12px;color:var(--tx);font-family:var(--f);font-size:.88rem;transition:border-color .2s;outline:none}
+input:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+select option{background:var(--card)}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.fa{display:flex;gap:9px;justify-content:flex-end;margin-top:16px}
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.mo.on{display:flex}
+.mbox{background:var(--card);border:1px solid var(--bor);border-radius:20px;padding:28px;width:530px;max-width:95vw;max-height:88vh;overflow-y:auto;animation:fu .3s ease}
+.mbox h2{font-family:var(--fh);font-size:1.25rem;margin-bottom:20px;color:var(--ac)}
+.slg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.slt{background:var(--bg);border:1px solid var(--bor2);border-radius:var(--r2);padding:9px}
+.sln{font-size:.61rem;color:var(--ac);font-family:var(--fm);letter-spacing:1px;margin-bottom:4px}
+.tabs{display:flex;gap:3px;margin-bottom:16px;border-bottom:1px solid var(--bor);flex-wrap:wrap}
+.tb{padding:8px 15px;border:none;background:none;color:var(--tx2);cursor:pointer;font-family:var(--f);font-size:.82rem;font-weight:500;border-bottom:2px solid transparent;transition:all .2s;margin-bottom:-1px}
+.tb.on{color:var(--ac);border-bottom-color:var(--ac)}
+.tbc{display:none}.tbc.on{display:block}
+.al{padding:9px 12px;border-radius:var(--r2);font-size:.82rem;margin-bottom:12px}
+.ale{background:var(--redd);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+.alo{background:var(--greend);color:var(--green);border:1px solid rgba(16,185,129,.3)}
+.emp{text-align:center;padding:42px 20px;color:var(--tx3)}
+.emp-i{font-size:2.4rem;margin-bottom:9px}
+.emp h3{font-family:var(--fh);font-size:.95rem;color:var(--tx2);margin-bottom:4px}
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:15px}
+.cc{background:var(--card);border:1px solid var(--bor);border-radius:var(--r);padding:19px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.cc:hover{border-color:var(--ac);transform:translateY(-2px)}
+.cc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--ac),var(--pur))}
+.cc h3{font-family:var(--fh);font-size:.98rem;margin-bottom:8px}
+.cm{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+.cp{background:var(--sur);border:1px solid var(--bor);border-radius:5px;padding:2px 8px;font-size:.69rem;font-family:var(--fm);color:var(--tx3)}
+.cp span{color:var(--tx2)}
+.pw{margin-top:11px}
+.pl{display:flex;justify-content:space-between;font-size:.65rem;color:var(--tx3);margin-bottom:4px}
+.pb{height:3px;background:var(--bor);border-radius:2px;overflow:hidden}
+.pf{height:100%;background:linear-gradient(90deg,var(--ac),var(--pur));border-radius:2px;transition:width .6s}
+.bkb{display:inline-flex;align-items:center;gap:6px;background:none;border:none;color:var(--tx3);cursor:pointer;font-family:var(--f);font-size:.875rem;padding:0;margin-bottom:14px;transition:color .2s}
+.bkb:hover{color:var(--ac)}
+.sb2{display:flex;gap:8px;margin-bottom:13px;flex-wrap:wrap}
+.sb2 input{flex:1;min-width:170px}
+.sb2 select{width:auto;min-width:135px}
+.ac{font-family:var(--fm);font-weight:600;color:var(--gold)}
+.pav{width:58px;height:58px;border-radius:50%;background:var(--acd);border:2px solid rgba(59,130,246,.4);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-right:16px}
+.rc{background:var(--card2);border:1px solid var(--bor);border-radius:var(--r);padding:17px;margin-bottom:10px}
+.rc h4{font-weight:600;margin-bottom:10px;font-size:.88rem}
+.rr{display:flex;justify-content:space-between;font-size:.81rem;padding:4px 0;border-bottom:1px solid rgba(28,42,58,.5)}
+.rr:last-child{border-bottom:none}
+.rr .k{color:var(--tx3)}.rr .v{font-family:var(--fm);font-weight:600;color:var(--gold)}
+.rr .v.gr{color:var(--green)}.rr .v.re{color:var(--red)}.rr .v.bl{color:var(--ac2)}
+@keyframes fu{from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bor);border-radius:3px}
+@media print{.sb,.btn,.btns,.mo,.pgh button{display:none!important}.main{margin-left:0!important;padding:10px!important}body{background:#fff;color:#000}}
+@media(max-width:860px){.sb{display:none}.main{margin-left:0;padding:15px}.fr{grid-template-columns:1fr}.slg{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="s-login" class="ascreen on">
+  <div class="abox">
+    <div class="alogo"><h1>کمیٹی Pro</h1><p>COMMITTEE MANAGEMENT SYSTEM</p><span class="abadge">PAKISTAN · PKR · 2025</span></div>
+    <div class="atabs"><button class="atab on" onclick="atab('adm')">🔐 Admin</button><button class="atab" onclick="atab('mem')">👤 Member</button></div>
+    <div id="adm-form">
+      <div class="ahint">Default: <strong>admin</strong> / <strong>admin123</strong></div>
+      <div id="e1" class="al ale" style="display:none"></div>
+      <div class="fg"><label class="lb">Username</label><input id="a-u" value="admin"></div>
+      <div class="fg"><label class="lb">Password</label><input id="a-p" type="password" value="admin123" onkeydown="if(event.key==='Enter')li()"></div>
+      <button class="btn btnp" style="width:100%;padding:12px" onclick="li()">Login →</button>
+    </div>
+    <div id="mem-form" style="display:none">
+      <div id="e2" class="al ale" style="display:none"></div>
+      <div class="fg"><label class="lb">Username</label><input id="m-u" placeholder="your_username"></div>
+      <div class="fg"><label class="lb">Password</label><input id="m-p" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')mli()"></div>
+      <div style="text-align:right;margin:-4px 0 11px"><span class="alink" onclick="ss('forgot')">Forgot password?</span></div>
+      <button class="btn btnp" style="width:100%;padding:12px" onclick="mli()">Login →</button>
+      <div style="text-align:center;margin-top:11px;font-size:.82rem;color:var(--tx3)">No account? <span class="alink" onclick="ss('reg')">Register</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div id="s-reg" class="ascreen">
+  <div class="abox">
+    <div class="alogo"><h1>کمیٹی Pro</h1><p>CREATE ACCOUNT</p></div>
+    <div id="re-al" class="al" style="display:none"></div>
+    <div class="fr"><div class="fg"><label class="lb">Full Name *</label><input id="rn" placeholder="Ahmad Ali"></div><div class="fg"><label class="lb">Username *</label><input id="ru" placeholder="ahmad_ali"></div></div>
+    <div class="fg"><label class="lb">Email</label><input id="re" type="email" placeholder="email@example.com"></div>
+    <div class="fr"><div class="fg"><label class="lb">Password *</label><input id="rp" type="password" placeholder="Min 6 chars"></div><div class="fg"><label class="lb">Phone</label><input id="rph" placeholder="0301-1234567"></div></div>
+    <div class="fg"><label class="lb">CNIC</label><input id="rc" placeholder="35201-1234567-1"></div>
+    <button class="btn btnp" style="width:100%;padding:12px;margin-top:3px" onclick="reg()">Create Account →</button>
+    <div style="text-align:center;margin-top:11px;font-size:.82rem;color:var(--tx3)">Have account? <span class="alink" onclick="ss('login')">Login</span></div>
+  </div>
+</div>
+
+<!-- FORGOT -->
+<div id="s-forgot" class="ascreen">
+  <div class="abox">
+    <div class="alogo"><h1>کمیٹی Pro</h1><p>RESET PASSWORD</p></div>
+    <div id="fo-al" class="al" style="display:none"></div>
+    <p style="color:var(--tx2);font-size:.875rem;margin-bottom:16px">Enter username + phone/CNIC for verification.</p>
+    <div class="fg"><label class="lb">Username</label><input id="fu" placeholder="your_username"></div>
+    <div class="fg"><label class="lb">New Password</label><input id="fp" type="password" placeholder="Min 6 chars"></div>
+    <div class="fg"><label class="lb">Phone or CNIC (verification)</label><input id="fa" placeholder="Your registered phone or CNIC"></div>
+    <button class="btn btnp" style="width:100%;padding:12px" onclick="forg()">Reset Password →</button>
+    <div style="text-align:center;margin-top:11px"><span class="alink" onclick="ss('login')">← Back to Login</span></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="layout">
+    <div class="sb">
+      <div class="sbh"><div class="sbh"><h2>کمیٹی Pro</h2><p>COMMITTEE SYSTEM</p></div><div class="sbu"><div class="un" id="sb-n">—</div><div class="ur" id="sb-r">—</div></div></div>
+      <nav class="nav" id="mnav"></nav>
+      <div class="sbf"><button class="btnlo" onclick="lo()">⏻ Logout</button><div style="text-align:center;font-size:.61rem;color:var(--tx3);font-family:var(--fm);margin-top:6px">v3 · localStorage · Vercel Ready</div></div>
+    </div>
+    <div class="main">
+
+      <!-- DASHBOARD -->
+      <div id="pg-dash" class="pg">
+        <div class="pgh"><div><div class="pgt">Dashboard</div><div class="pgs" id="d-date">—</div></div></div>
+        <div class="sg" id="d-stats"></div>
+        <div class="card" style="background:var(--card2)"><div class="ct">📋 How It Works</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:11px" id="d-guide"></div></div>
+      </div>
+
+      <!-- USERS -->
+      <div id="pg-users" class="pg">
+        <div class="pgh"><div><div class="pgt">Users</div><div class="pgs">MANAGE ACCOUNTS</div></div><button class="btn btnp" onclick="om('um')">+ Add User</button></div>
+        <div class="sb2"><input id="us-s" placeholder="Search name/username..." oninput="rUsers()"><select id="us-r" onchange="rUsers()"><option value="">All Roles</option><option value="admin">Admin</option><option value="member">Member</option></select></div>
+        <div class="card"><div class="tw"><table><thead><tr><th>#</th><th>Name</th><th>Username</th><th>Role</th><th>Phone</th><th>Email</th><th>Status</th><th>Actions</th></tr></thead><tbody id="u-tb"></tbody></table></div></div>
+      </div>
+
+      <!-- COMMITTEES -->
+      <div id="pg-comm" class="pg">
+        <div id="cl">
+          <div class="pgh"><div><div class="pgt">Committees</div><div class="pgs">کمیٹیاں</div></div><button class="btn btnp adm" onclick="om('cm')">+ New Committee</button></div>
+          <div class="sb2"><input id="cs-s" placeholder="Search..." oninput="rComms()"><select id="cs-st" onchange="rComms()"><option value="">All</option><option value="active">Active</option><option value="paused">Paused</option><option value="completed">Completed</option></select></div>
+          <div class="cg" id="cg"></div>
+        </div>
+        <div id="cd" style="display:none">
+          <button class="bkb" onclick="scl()">← Back</button>
+          <div class="pgh"><div><div class="pgt" id="d-nm">—</div><div class="pgs" id="d-sb">—</div></div><div style="display:flex;gap:7px;align-items:center"><span id="d-bd"></span><button class="btn btns btno" onclick="window.print()">🖨️ Print</button></div></div>
+          <div class="sg" id="d-st"></div>
+          <div class="tabs"><button class="tb on" onclick="stb('dtm')">👥 Members</button><button class="tb" onclick="stb('dtp')">💳 Payments</button><button class="tb" onclick="stb('dto')">💰 Payouts</button></div>
+          <div id="dtm" class="tbc on card"><div class="tw"><table><thead><tr><th>Turn</th><th>Member</th><th>Payout Month</th><th>Pool</th><th>Status</th></tr></thead><tbody id="dtm-b"></tbody></table></div></div>
+          <div id="dtp" class="tbc">
+            <div class="sb2" style="margin-bottom:11px">
+              <select id="pf-m" onchange="rDP()" style="width:auto"><option value="">All Months</option><option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option><option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option><option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option></select>
+              <select id="pf-s" onchange="rDP()" style="width:auto"><option value="">All</option><option value="paid">Paid</option><option value="pending">Pending</option></select>
+            </div>
+            <div class="card"><div class="tw"><table><thead><tr><th>Member</th><th>Month/Year</th><th>Amount</th><th>Status</th><th>Paid On</th><th>Notes</th><th class="adm">Action</th></tr></thead><tbody id="dtp-b"></tbody></table></div></div>
+          </div>
+          <div id="dto" class="tbc"><div class="card"><div class="tw"><table><thead><tr><th>Member</th><th>Month</th><th>Pool</th><th>Status</th><th>Given On</th><th class="adm">Action</th></tr></thead><tbody id="dto-b"></tbody></table></div></div></div>
+        </div>
+      </div>
+
+      <!-- PAYMENTS -->
+      <div id="pg-pay" class="pg">
+        <div class="pgh"><div><div class="pgt">Payments</div><div class="pgs">ALL PAYMENTS</div></div><button class="btn btns btno" onclick="window.print()">🖨️ Print</button></div>
+        <div class="sb2"><input id="gp-s" placeholder="Search member..." oninput="rGP()"><select id="gp-st" onchange="rGP()"><option value="">All</option><option value="paid">Paid</option><option value="pending">Pending</option></select><select id="gp-c" onchange="rGP()"><option value="">All Committees</option></select></div>
+        <div class="card"><div class="tw"><table><thead><tr><th>Committee</th><th>Member</th><th>Month</th><th>Year</th><th>Amount</th><th>Status</th><th>Paid On</th><th class="adm">Action</th></tr></thead><tbody id="gp-b"></tbody></table></div></div>
+      </div>
+
+      <!-- PAYOUTS -->
+      <div id="pg-pout" class="pg">
+        <div class="pgh"><div><div class="pgt">Payouts</div><div class="pgs">وصولی</div></div><button class="btn btns btno" onclick="window.print()">🖨️ Print</button></div>
+        <div class="sb2"><input id="go-s" placeholder="Search member..." oninput="rGO()"><select id="go-st" onchange="rGO()"><option value="">All</option><option value="given">Given</option><option value="pending">Pending</option></select><select id="go-c" onchange="rGO()"><option value="">All Committees</option></select></div>
+        <div class="card"><div class="tw"><table><thead><tr><th>Committee</th><th>Member</th><th>Turn Month</th><th>Year</th><th>Pool</th><th>Status</th><th>Given On</th><th class="adm">Action</th></tr></thead><tbody id="go-b"></tbody></table></div></div>
+      </div>
+
+      <!-- REPORTS -->
+      <div id="pg-rep" class="pg">
+        <div class="pgh"><div><div class="pgt">Reports</div><div class="pgs">FINANCIAL SUMMARY</div></div><button class="btn btns btno" onclick="window.print()">🖨️ Print</button></div>
+        <div id="rep-w"></div>
+      </div>
+
+      <!-- PROFILE -->
+      <div id="pg-prof" class="pg">
+        <div class="pgh"><div><div class="pgt">My Profile</div><div class="pgs">ACCOUNT SETTINGS</div></div></div>
+        <div class="card" style="max-width:520px">
+          <div style="display:flex;align-items:center;margin-bottom:20px"><div class="pav" id="pav">👤</div><div><div id="pn" style="font-size:1.05rem;font-weight:700"></div><div id="pr" style="font-size:.67rem;color:var(--ac);font-family:var(--fm);margin-top:3px"></div></div></div>
+          <div id="pi"></div>
+          <hr style="border:none;border-top:1px solid var(--bor);margin:16px 0">
+          <div class="ct">Change Password</div>
+          <div id="pw-al"></div>
+          <div class="fg"><label class="lb">New Password</label><input type="password" id="np" placeholder="Min 6 chars"></div>
+          <div class="fg"><label class="lb">Confirm</label><input type="password" id="cp" placeholder="Repeat"></div>
+          <button class="btn btnp" onclick="chpw()">Update Password</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- USER MODAL -->
+<div class="mo" id="um"><div class="mbox"><h2 id="um-t">Add User</h2><div id="um-al"></div>
+  <input type="hidden" id="um-id">
+  <div class="fr"><div class="fg"><label class="lb">Full Name *</label><input id="um-n" placeholder="Ahmad Ali"></div><div class="fg"><label class="lb">Username *</label><input id="um-u" placeholder="ahmad_ali"></div></div>
+  <div class="fr"><div class="fg"><label class="lb">Password</label><input type="password" id="um-p" placeholder="••••••••"></div><div class="fg"><label class="lb">Role</label><select id="um-r"><option value="member">Member</option><option value="admin">Admin</option></select></div></div>
+  <div class="fr"><div class="fg"><label class="lb">Phone</label><input id="um-ph" placeholder="0301-1234567"></div><div class="fg"><label class="lb">CNIC</label><input id="um-cn" placeholder="35201-XXXXXXX-X"></div></div>
+  <div class="fg"><label class="lb">Email</label><input type="email" id="um-em" placeholder="email@example.com"></div>
+  <div class="fg" id="um-sw" style="display:none"><label class="lb">Status</label><select id="um-ac"><option value="true">Active</option><option value="false">Disabled</option></select></div>
+  <div class="fa"><button class="btn btno" onclick="cm('um')">Cancel</button><button class="btn btnp" onclick="sUser()">Save</button></div>
+</div></div>
+
+<!-- COMMITTEE MODAL -->
+<div class="mo" id="cm"><div class="mbox"><h2>New Committee</h2><div id="cm-al"></div>
+  <div class="fg"><label class="lb">Committee Name *</label><input id="cm-n" placeholder="Family Committee 2025"></div>
+  <div class="fr"><div class="fg"><label class="lb">Monthly Amount (PKR) *</label><input type="number" id="cm-a" placeholder="5000" min="1"></div><div class="fg"><label class="lb">Total Members *</label><input type="number" id="cm-c" placeholder="10" min="2" max="24" oninput="gSlots()"></div></div>
+  <div class="fg"><label class="lb">Start Date *</label><input type="date" id="cm-sd"></div>
+  <div class="fg"><label class="lb">Assign Members to Turns</label><small style="color:var(--tx3);font-size:.72rem">Enter member count above first</small><div class="slg" id="cm-sl" style="margin-top:8px"></div></div>
+  <div class="fa"><button class="btn btno" onclick="cm('cm')">Cancel</button><button class="btn btnp" onclick="sComm()">Create</button></div>
+</div></div>
+
+<!-- PAY NOTE MODAL -->
+<div class="mo" id="pnm"><div class="mbox" style="width:370px"><h2>Mark as Paid</h2>
+  <input type="hidden" id="pnm-id"><input type="hidden" id="pnm-src">
+  <div class="fg"><label class="lb">Notes (optional)</label><textarea id="pnm-nt" rows="3" placeholder="Cash / JazzCash / Easypaisa..."></textarea></div>
+  <div class="fa"><button class="btn btno" onclick="cm('pnm')">Cancel</button><button class="btn btnsu" onclick="cPaid()">✓ Confirm Paid</button></div>
+</div></div>
+
+<script>
+// ── DB ──────────────────────────────────────────────────────
+const S={
+  g:k=>{try{return JSON.parse(localStorage.getItem('cp3_'+k)||'null')}catch{return null}},
+  s:(k,v)=>localStorage.setItem('cp3_'+k,JSON.stringify(v)),
+  id:()=>'_'+Math.random().toString(36).substr(2,9)+Date.now().toString(36)
+};
+function iDB(){
+  if(!S.g('users'))S.s('users',[{_id:'adm001',username:'admin',password:'admin123',name:'Super Admin',role:'admin',phone:'0300-0000000',email:'admin@committee.pk',cnic:'',active:true,createdAt:new Date().toISOString()}]);
+  if(!S.g('comms'))S.s('comms',[]);
+  if(!S.g('pays'))S.s('pays',[]);
+  if(!S.g('pouts'))S.s('pouts',[]);
+}
+iDB();
+
+// ── STATE ───────────────────────────────────────────────────
+let ME=null,CID=null,DP=[],DO=[];
+const MO=['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const pkr=n=>'PKR '+(n||0).toLocaleString('en-PK');
+
+// ── AUTH ────────────────────────────────────────────────────
+function ss(n){document.querySelectorAll('.ascreen').forEach(s=>s.classList.remove('on'));document.getElementById('app').style.display='none';document.getElementById('s-'+n)?.classList.add('on')}
+function atab(t){
+  document.querySelectorAll('.atab').forEach((b,i)=>b.classList.toggle('on',i===(t==='adm'?0:1)));
+  document.getElementById('adm-form').style.display=t==='adm'?'':'none';
+  document.getElementById('mem-form').style.display=t==='mem'?'':'none';
+}
+function li(){
+  const u=document.getElementById('a-u').value.trim(),p=document.getElementById('a-p').value,e=document.getElementById('e1');
+  e.style.display='none';
+  const usr=(S.g('users')||[]).find(x=>x.username===u&&x.password===p&&x.role==='admin'&&x.active!==false);
+  if(!usr){e.textContent='Invalid admin credentials';e.style.display='';return;}
+  ME=usr;go();
+}
+function mli(){
+  const u=document.getElementById('m-u').value.trim(),p=document.getElementById('m-p').value,e=document.getElementById('e2');
+  e.style.display='none';
+  const usr=(S.g('users')||[]).find(x=>x.username===u&&x.password===p&&x.active!==false);
+  if(!usr){e.textContent='Invalid credentials';e.style.display='';return;}
+  ME=usr;go();
+}
+function reg(){
+  const n=document.getElementById('rn').value.trim(),u=document.getElementById('ru').value.trim(),e=document.getElementById('re').value.trim(),p=document.getElementById('rp').value,ph=document.getElementById('rph').value.trim(),c=document.getElementById('rc').value.trim();
+  const al=document.getElementById('re-al');al.style.display='none';
+  if(!n||!u||!p){al.className='al ale';al.textContent='Name, username & password required!';al.style.display='';return;}
+  if(p.length<6){al.className='al ale';al.textContent='Password min 6 characters';al.style.display='';return;}
+  const us=S.g('users')||[];
+  if(us.find(x=>x.username===u)){al.className='al ale';al.textContent='Username already taken';al.style.display='';return;}
+  if(e&&us.find(x=>x.email===e)){al.className='al ale';al.textContent='Email already registered';al.style.display='';return;}
+  us.push({_id:S.id(),username:u,password:p,name:n,email:e,phone:ph,cnic:c,role:'member',active:true,createdAt:new Date().toISOString()});
+  S.s('users',us);
+  al.className='al alo';al.textContent='Account created! You can now login.';al.style.display='';
+  setTimeout(()=>ss('login'),2000);
+}
+function forg(){
+  const u=document.getElementById('fu').value.trim(),p=document.getElementById('fp').value,a=document.getElementById('fa').value.trim();
+  const al=document.getElementById('fo-al');al.style.display='none';
+  if(!u||!p||!a){al.className='al ale';al.textContent='All fields required';al.style.display='';return;}
+  if(p.length<6){al.className='al ale';al.textContent='Password min 6 chars';al.style.display='';return;}
+  const us=S.g('users')||[],idx=us.findIndex(x=>x.username===u);
+  if(idx<0){al.className='al ale';al.textContent='Username not found';al.style.display='';return;}
+  if(a!==us[idx].phone&&a!==us[idx].cnic){al.className='al ale';al.textContent='Verification failed — enter registered phone or CNIC';al.style.display='';return;}
+  us[idx].password=p;S.s('users',us);
+  al.className='al alo';al.textContent='Password reset! You can now login.';al.style.display='';
+  setTimeout(()=>ss('login'),2000);
+}
+function lo(){ME=null;document.getElementById('app').style.display='none';ss('login')}
+
+// ── APP ─────────────────────────────────────────────────────
+function go(){
+  document.querySelectorAll('.ascreen').forEach(s=>s.classList.remove('on'));
+  document.getElementById('app').style.display='';
+  document.getElementById('sb-n').textContent=ME.name;
+  document.getElementById('sb-r').textContent=ME.role.toUpperCase();
+  bNav();aRole();nav('dash');
+}
+function bNav(){
+  const ia=ME.role==='admin';
+  const items=[
+    {id:'dash',ic:'📊',lb:'Dashboard'},
+    ia?{id:'users',ic:'👥',lb:'Users',sc:'ADMIN'}:null,
+    {id:'comm',ic:'🏦',lb:'Committees',sc:ia?null:'MY COMMITTEES'},
+    {id:'pay',ic:'💳',lb:'Payments'},
+    {id:'pout',ic:'💰',lb:'Payouts'},
+    ia?{id:'rep',ic:'📈',lb:'Reports'}:null,
+    {id:'prof',ic:'⚙️',lb:'Profile',sc:'ACCOUNT'},
+  ].filter(Boolean);
+  document.getElementById('mnav').innerHTML=items.map(x=>(x.sc?`<div class="nsec">${x.sc}</div>`:'')+`<button class="ni" id="n-${x.id}" onclick="nav('${x.id}')"><span class="ico">${x.ic}</span>${x.lb}</button>`).join('');
+}
+function aRole(){
+  const ia=ME.role==='admin';
+  document.querySelectorAll('.adm').forEach(e=>e.style.display=ia?'':'none');
+  if(!ia)document.querySelectorAll('th.adm').forEach(e=>e.style.display='none');
+}
+function nav(p){
+  document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(x=>x.classList.remove('on'));
+  document.getElementById('pg-'+p)?.classList.add('on');
+  document.getElementById('n-'+p)?.classList.add('on');
+  ({dash:lDash,users:()=>rUsers(),comm:()=>{scl();rComms();},pay:lGP,pout:lGO,rep:lRep,prof:lProf})[p]?.();
+}
+
+// ── DASHBOARD ───────────────────────────────────────────────
+function lDash(){
+  const ia=ME.role==='admin';
+  const us=S.g('users')||[],cs=S.g('comms')||[],ps=S.g('pays')||[],po=S.g('pouts')||[];
+  const mc=ia?cs:cs.filter(c=>c.members?.some(m=>m.uid===ME._id));
+  const mp=ia?ps:ps.filter(p=>p.uid===ME._id);
+  const mo=ia?po:po.filter(p=>p.uid===ME._id);
+  const col=mp.filter(p=>p.status==='paid').reduce((s,p)=>s+p.amt,0);
+  document.getElementById('d-date').textContent=new Date().toLocaleDateString('en-PK',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const sts=ia?[
+    {l:'Users',v:us.filter(u=>u.active!==false).length,c:'bl',b:'bl',s:'Registered'},
+    {l:'Committees',v:cs.length,c:'pu',b:'pu',s:'Total'},
+    {l:'Active',v:cs.filter(c=>c.status==='active').length,c:'gr',b:'gr',s:'Running'},
+    {l:'Collected',v:pkr(col),c:'go',b:'go',s:'Total paid'},
+    {l:'Pending Payments',v:ps.filter(p=>p.status==='pending').length,c:'re',b:'re',s:'Due'},
+    {l:'Pending Payouts',v:po.filter(p=>p.status==='pending').length,c:'re',b:'re',s:'To give'},
+  ]:[
+    {l:'My Committees',v:mc.length,c:'bl',b:'bl',s:'Enrolled'},
+    {l:'Active',v:mc.filter(c=>c.status==='active').length,c:'gr',b:'gr',s:'Running'},
+    {l:'Paid',v:mp.filter(p=>p.status==='paid').length,c:'go',b:'go',s:'Done'},
+    {l:'Pending',v:mp.filter(p=>p.status==='pending').length,c:'re',b:'re',s:'Due'},
+    {l:'Received',v:mo.filter(p=>p.status==='given').length,c:'pu',b:'pu',s:'Payouts'},
+    {l:'Upcoming',v:mo.filter(p=>p.status==='pending').length,c:'go',b:'go',s:'Waiting'},
+  ];
+  document.getElementById('d-stats').innerHTML=sts.map(s=>`<div class="st"><div class="stb ${s.b}"></div><div class="sl">${s.l}</div><div class="sv ${s.c}">${s.v}</div><div class="ss">${s.s}</div></div>`).join('');
+  document.getElementById('d-guide').innerHTML=[
+    ia?['1️⃣','Add Users','Create member accounts']:'',
+    ['2️⃣','Create Committee','Set amount & turns'],
+    ['3️⃣','Collect Monthly','Mark payments paid'],
+    ['4️⃣','Give Payout','Distribute to turn member'],
+  ].filter(Boolean).map(s=>`<div style="background:var(--bg);border:1px solid var(--bor);border-radius:9px;padding:12px"><div style="font-size:1.2rem;margin-bottom:6px">${s[0]}</div><div style="font-weight:600;font-size:.85rem;margin-bottom:2px">${s[1]}</div><div style="font-size:.74rem;color:var(--tx3)">${s[2]}</div></div>`).join('');
+}
+
+// ── USERS ───────────────────────────────────────────────────
+function rUsers(){
+  const s=(document.getElementById('us-s')?.value||'').toLowerCase();
+  const rf=document.getElementById('us-r')?.value||'';
+  const us=(S.g('users')||[]).filter(u=>(!s||u.name.toLowerCase().includes(s)||u.username.toLowerCase().includes(s))&&(!rf||u.role===rf));
+  const tb=document.getElementById('u-tb');
+  if(!us.length){tb.innerHTML=`<tr><td colspan="8"><div class="emp"><div class="emp-i">👥</div><h3>No users</h3></div></td></tr>`;return;}
+  tb.innerHTML=us.map((u,i)=>`<tr>
+    <td><span class="badge bb">${i+1}</span></td>
+    <td><strong>${u.name}</strong></td>
+    <td style="font-family:var(--fm);font-size:.79rem">${u.username}</td>
+    <td><span class="badge ${u.role==='admin'?'bp':'bb'}">${u.role.toUpperCase()}</span></td>
+    <td style="font-size:.81rem;color:var(--tx2)">${u.phone||'—'}</td>
+    <td style="font-size:.77rem;color:var(--tx3)">${u.email||'—'}</td>
+    <td><span class="badge ${u.active!==false?'bg':'br'}">${u.active!==false?'ACTIVE':'OFF'}</span></td>
+    <td style="display:flex;gap:4px">
+      <button class="btn btns btno" onclick="oEU('${u._id}')">Edit</button>
+      ${u.username!=='admin'?`<button class="btn btns btnd" onclick="dUser('${u._id}')">Remove</button>`:''}
+    </td>
+  </tr>`).join('');
+}
+
+function oEU(id){
+  const u=(S.g('users')||[]).find(x=>x._id===id);if(!u)return;
+  document.getElementById('um-id').value=id;document.getElementById('um-t').textContent='Edit User';
+  document.getElementById('um-n').value=u.name;document.getElementById('um-u').value=u.username;
+  document.getElementById('um-p').value='';document.getElementById('um-p').placeholder='Leave blank = no change';
+  document.getElementById('um-r').value=u.role;document.getElementById('um-ph').value=u.phone||'';
+  document.getElementById('um-cn').value=u.cnic||'';document.getElementById('um-em').value=u.email||'';
+  document.getElementById('um-sw').style.display='';document.getElementById('um-ac').value=String(u.active!==false);
+  document.getElementById('um-al').innerHTML='';om('um');
+}
+
+function sUser(){
+  const id=document.getElementById('um-id').value,n=document.getElementById('um-n').value.trim(),u=document.getElementById('um-u').value.trim(),p=document.getElementById('um-p').value;
+  const al=document.getElementById('um-al');al.innerHTML='';
+  if(!n||!u){al.innerHTML='<div class="al ale">Name & username required</div>';return;}
+  if(!id&&!p){al.innerHTML='<div class="al ale">Password required</div>';return;}
+  if(p&&p.length<6){al.innerHTML='<div class="al ale">Password min 6 chars</div>';return;}
+  let us=S.g('users')||[];
+  if(!id){
+    if(us.find(x=>x.username===u)){al.innerHTML='<div class="al ale">Username taken</div>';return;}
+    us.push({_id:S.id(),username:u,password:p,name:n,role:document.getElementById('um-r').value,phone:document.getElementById('um-ph').value,cnic:document.getElementById('um-cn').value,email:document.getElementById('um-em').value,active:true,createdAt:new Date().toISOString()});
+  }else{
+    const i=us.findIndex(x=>x._id===id);
+    if(i>=0){us[i]={...us[i],name:n,username:u,role:document.getElementById('um-r').value,phone:document.getElementById('um-ph').value,cnic:document.getElementById('um-cn').value,email:document.getElementById('um-em').value,active:document.getElementById('um-ac').value==='true'};if(p)us[i].password=p;}
+  }
+  S.s('users',us);rUsers();cm('um');
+}
+
+function dUser(id){if(!confirm('Disable this user?'))return;const us=(S.g('users')||[]).map(u=>u._id===id?{...u,active:false}:u);S.s('users',us);rUsers();}
+
+// ── COMMITTEES ──────────────────────────────────────────────
+function scl(){document.getElementById('cl').style.display='';document.getElementById('cd').style.display='none';CID=null;}
+function rComms(){
+  const s=(document.getElementById('cs-s')?.value||'').toLowerCase(),sf=document.getElementById('cs-st')?.value||'';
+  const cs=(S.g('comms')||[]).filter(c=>(!s||c.name.toLowerCase().includes(s))&&(!sf||c.status===sf));
+  const ia=ME.role==='admin';
+  const vis=ia?cs:cs.filter(c=>c.members?.some(m=>m.uid===ME._id));
+  const g=document.getElementById('cg');
+  if(!vis.length){g.innerHTML=`<div class="emp" style="grid-column:1/-1"><div class="emp-i">🏦</div><h3>No committees</h3></div>`;return;}
+  g.innerHTML=vis.map(c=>{
+    const tk=c.members?.filter(m=>m.taken).length||0,pool=c.amt*c.total,pct=Math.round((tk/c.total)*100);
+    const sb={active:'bg',completed:'bb',paused:'bo'}[c.status]||'bo';
+    return`<div class="cc" onclick="oCom('${c._id}')">
+      <div style="display:flex;justify-content:space-between;align-items:start"><h3>${c.name}</h3><span class="badge ${sb}">${c.status.toUpperCase()}</span></div>
+      <div class="cm">
+        <div class="cp">👥 <span>${c.total}</span> members</div>
+        <div class="cp">💰 <span>${pkr(c.amt)}</span>/mo</div>
+        <div class="cp">Pool <span>${pkr(pool)}</span></div>
+        <div class="cp">📅 <span>${new Date(c.start).toLocaleDateString('en-PK',{month:'short',year:'numeric'})}</span></div>
+      </div>
+      <div class="pw"><div class="pl"><span>Payouts</span><span>${tk}/${c.total}</span></div><div class="pb"><div class="pf" style="width:${pct}%"></div></div></div>
+    </div>`;
+  }).join('');
+}
+
+function oCom(id){
+  CID=id;const c=(S.g('comms')||[]).find(x=>x._id===id);if(!c)return;
+  document.getElementById('cl').style.display='none';document.getElementById('cd').style.display='';
+  const sb={active:'bg',completed:'bb',paused:'bo'}[c.status]||'bo';
+  const pool=c.amt*c.total,tk=c.members?.filter(m=>m.taken).length||0;
+  document.getElementById('d-nm').textContent=c.name;
+  document.getElementById('d-sb').textContent=`Started: ${new Date(c.start).toLocaleDateString()} · ${c.total} Members`;
+  document.getElementById('d-bd').innerHTML=`<span class="badge ${sb}">${c.status.toUpperCase()}</span>`;
+  document.getElementById('d-st').innerHTML=[
+    {l:'Monthly/Member',v:pkr(c.amt),c:'go',b:'go',s:'Per member'},
+    {l:'Pool Amount',v:pkr(pool),c:'gr',b:'gr',s:'Each receives'},
+    {l:'Duration',v:c.total+' Months',c:'bl',b:'bl',s:'Total life'},
+    {l:'Paid Out',v:`${tk}/${c.total}`,c:'pu',b:'pu',s:'Members done'},
+  ].map(s=>`<div class="st"><div class="stb ${s.b}"></div><div class="sl">${s.l}</div><div class="sv ${s.c}" style="font-size:1.2rem">${s.v}</div><div class="ss">${s.s}</div></div>`).join('');
+  // members tab
+  const sd=new Date(c.start);
+  document.getElementById('dtm-b').innerHTML=(c.members||[]).sort((a,b)=>a.turn-b.turn).map(m=>{
+    const d=new Date(sd);d.setMonth(d.getMonth()+(m.turn-1));
+    return`<tr><td><span class="badge bb">${m.turn}</span></td><td><strong>${m.name}</strong></td><td style="font-family:var(--fm)">${MO[d.getMonth()+1]} ${d.getFullYear()}</td><td class="ac">${pkr(pool)}</td><td>${m.taken?'<span class="badge bg">RECEIVED ✓</span>':'<span class="badge bo">WAITING</span>'}</td></tr>`;
+  }).join('');
+  lDP(id);lDO(id);stb('dtm');
+}
+
+function lDP(id){
+  const pays=S.g('pays')||[];
+  const c=(S.g('comms')||[]).find(x=>x._id===id);
+  const mids=(c?.members||[]).map(m=>m.uid);
+  DP=pays.filter(p=>p.cid===id&&mids.includes(p.uid));
+  rDP();
+}
+function rDP(){
+  const mf=document.getElementById('pf-m')?.value||'',sf=document.getElementById('pf-s')?.value||'';
+  const ia=ME.role==='admin';
+  let f=DP;
+  if(mf)f=f.filter(p=>String(p.month)===mf);
+  if(sf)f=f.filter(p=>p.status===sf);
+  document.getElementById('dtp-b').innerHTML=f.length?f.map(p=>`<tr>
+    <td><strong>${p.mname}</strong></td><td style="font-family:var(--fm)">${MO[p.month]} ${p.year}</td>
+    <td class="ac">${pkr(p.amt)}</td>
+    <td>${p.status==='paid'?'<span class="badge bg">PAID</span>':'<span class="badge bo">PENDING</span>'}</td>
+    <td style="font-size:.79rem;color:var(--tx3)">${p.pdate?new Date(p.pdate).toLocaleDateString():'—'}</td>
+    <td style="font-size:.77rem;color:var(--tx3)">${p.notes||'—'}</td>
+    ${ia?`<td>${p.status==='pending'?`<button class="btn btns btnsu" onclick="oPM('${p._id}','det')">Mark Paid</button>`:`<button class="btn btns btnd" onclick="unPay('${p._id}','det')">Undo</button>`}</td>`:''}`+`</tr>`).join(''):`<tr><td colspan="7"><div class="emp"><div class="emp-i">💳</div><h3>No payments</h3></div></td></tr>`;
+}
+
+function lDO(id){
+  const pouts=S.g('pouts')||[];
+  const c=(S.g('comms')||[]).find(x=>x._id===id);
+  const mids=(c?.members||[]).map(m=>m.uid);
+  DO=pouts.filter(p=>p.cid===id&&mids.includes(p.uid));
+  rDO();
+}
+function rDO(){
+  const ia=ME.role==='admin';
+  document.getElementById('dto-b').innerHTML=DO.length?DO.map(p=>`<tr>
+    <td><strong>${p.mname}</strong></td><td style="font-family:var(--fm)">${MO[p.tmonth]} ${p.tyear}</td>
+    <td class="ac">${pkr(p.amt)}</td>
+    <td>${p.status==='given'?'<span class="badge bg">GIVEN ✓</span>':'<span class="badge bo">PENDING</span>'}</td>
+    <td style="font-size:.79rem;color:var(--tx3)">${p.gdate?new Date(p.gdate).toLocaleDateString():'—'}</td>
+    ${ia?`<td>${p.status==='pending'?`<button class="btn btns btnp" onclick="gPout('${p._id}')">Mark Given</button>`:'✓'}</td>`:''}`+`</tr>`).join(''):`<tr><td colspan="6"><div class="emp"><div class="emp-i">💰</div><h3>No payouts</h3></div></td></tr>`;
+}
+
+function gSlots(){
+  const n=parseInt(document.getElementById('cm-c').value)||0;
+  const us=(S.g('users')||[]).filter(u=>u.active!==false);
+  const sl=document.getElementById('cm-sl');
+  if(n<2){sl.innerHTML='';return;}
+  sl.innerHTML=Array.from({length:n},(_,i)=>`<div class="slt"><div class="sln">TURN ${i+1}</div><select id="sl-${i+1}"><option value="">— Select —</option>${us.map(u=>`<option value="${u._id}" data-n="${u.name}">${u.name} (${u.username})</option>`).join('')}</select></div>`).join('');
+}
+
+function sComm(){
+  const n=document.getElementById('cm-n').value.trim(),a=parseFloat(document.getElementById('cm-a').value),cnt=parseInt(document.getElementById('cm-c').value),sd=document.getElementById('cm-sd').value;
+  const al=document.getElementById('cm-al');al.innerHTML='';
+  if(!n||!a||!cnt||!sd){al.innerHTML='<div class="al ale">All fields required</div>';return;}
+  const members=[];
+  for(let i=1;i<=cnt;i++){
+    const s=document.getElementById('sl-'+i);
+    if(!s?.value){al.innerHTML=`<div class="al ale">Select member for Turn ${i}</div>`;return;}
+    members.push({uid:s.value,name:s.options[s.selectedIndex].dataset.n,turn:i,taken:false});
+  }
+  const cid=S.id(),start=new Date(sd),cs=S.g('comms')||[];
+  cs.unshift({_id:cid,name:n,amt:a,total:cnt,start:sd,status:'active',members,createdAt:new Date().toISOString()});
+  S.s('comms',cs);
+  // generate payments & payouts
+  const pays=S.g('pays')||[],pouts=S.g('pouts')||[];
+  for(let mo=0;mo<cnt;mo++){const d=new Date(start);d.setMonth(d.getMonth()+mo);for(const m of members)pays.push({_id:S.id(),cid,cname:n,uid:m.uid,mname:m.name,month:d.getMonth()+1,year:d.getFullYear(),amt:a,status:'pending'});}
+  for(const m of members){const d=new Date(start);d.setMonth(d.getMonth()+(m.turn-1));pouts.push({_id:S.id(),cid,cname:n,uid:m.uid,mname:m.name,tmonth:d.getMonth()+1,tyear:d.getFullYear(),amt:a*cnt,status:'pending'});}
+  S.s('pays',pays);S.s('pouts',pouts);
+  rComms();cm('cm');
+}
+
+// ── PAYMENTS ────────────────────────────────────────────────
+function lGP(){
+  const cs=S.g('comms')||[];
+  const sel=document.getElementById('gp-c');
+  sel.innerHTML='<option value="">All Committees</option>'+cs.map(c=>`<option value="${c._id}">${c.name}</option>`).join('');
+  rGP();
+}
+function rGP(){
+  const s=(document.getElementById('gp-s')?.value||'').toLowerCase(),sf=document.getElementById('gp-st')?.value||'',cf=document.getElementById('gp-c')?.value||'';
+  const ia=ME.role==='admin';
+  let ps=(S.g('pays')||[]).filter(p=>(!ia?p.uid===ME._id:true)&&(!s||p.mname.toLowerCase().includes(s))&&(!sf||p.status===sf)&&(!cf||p.cid===cf));
+  const tb=document.getElementById('gp-b');
+  if(!ps.length){tb.innerHTML=`<tr><td colspan="8"><div class="emp"><div class="emp-i">💳</div><h3>No payments</h3></div></td></tr>`;return;}
+  tb.innerHTML=ps.map(p=>`<tr>
+    <td style="font-size:.79rem;color:var(--tx2)">${p.cname}</td><td><strong>${p.mname}</strong></td>
+    <td style="font-family:var(--fm)">${MO[p.month]}</td><td style="font-family:var(--fm)">${p.year}</td>
+    <td class="ac">${pkr(p.amt)}</td>
+    <td>${p.status==='paid'?'<span class="badge bg">PAID</span>':'<span class="badge bo">PENDING</span>'}</td>
+    <td style="font-size:.79rem;color:var(--tx3)">${p.pdate?new Date(p.pdate).toLocaleDateString():'—'}</td>
+    ${ia?`<td>${p.status==='pending'?`<button class="btn btns btnsu" onclick="oPM('${p._id}','gp')">Mark Paid</button>`:`<button class="btn btns btnd" onclick="unPay('${p._id}','gp')">Undo</button>`}</td>`:''}`+`</tr>`).join('');
+}
+
+function lGO(){
+  const cs=S.g('comms')||[];
+  const sel=document.getElementById('go-c');
+  sel.innerHTML='<option value="">All Committees</option>'+cs.map(c=>`<option value="${c._id}">${c.name}</option>`).join('');
+  rGO();
+}
+function rGO(){
+  const s=(document.getElementById('go-s')?.value||'').toLowerCase(),sf=document.getElementById('go-st')?.value||'',cf=document.getElementById('go-c')?.value||'';
+  const ia=ME.role==='admin';
+  let po=(S.g('pouts')||[]).filter(p=>(!ia?p.uid===ME._id:true)&&(!s||p.mname.toLowerCase().includes(s))&&(!sf||p.status===sf)&&(!cf||p.cid===cf));
+  const tb=document.getElementById('go-b');
+  if(!po.length){tb.innerHTML=`<tr><td colspan="8"><div class="emp"><div class="emp-i">💰</div><h3>No payouts</h3></div></td></tr>`;return;}
+  tb.innerHTML=po.map(p=>`<tr>
+    <td style="font-size:.79rem;color:var(--tx2)">${p.cname}</td><td><strong>${p.mname}</strong></td>
+    <td style="font-family:var(--fm)">${MO[p.tmonth]}</td><td style="font-family:var(--fm)">${p.tyear}</td>
+    <td class="ac">${pkr(p.amt)}</td>
+    <td>${p.status==='given'?'<span class="badge bg">GIVEN ✓</span>':'<span class="badge bo">PENDING</span>'}</td>
+    <td style="font-size:.79rem;color:var(--tx3)">${p.gdate?new Date(p.gdate).toLocaleDateString():'—'}</td>
+    ${ia?`<td>${p.status==='pending'?`<button class="btn btns btnp" onclick="gPoutG('${p._id}')">Mark Given</button>`:'✓'}</td>`:''}`+`</tr>`).join('');
+}
+
+// ── PAYMENT ACTIONS ─────────────────────────────────────────
+function oPM(id,src){document.getElementById('pnm-id').value=id;document.getElementById('pnm-src').value=src;document.getElementById('pnm-nt').value='';om('pnm');}
+function cPaid(){
+  const id=document.getElementById('pnm-id').value,src=document.getElementById('pnm-src').value,nt=document.getElementById('pnm-nt').value;
+  let ps=S.g('pays')||[];const i=ps.findIndex(x=>x._id===id);
+  if(i>=0){ps[i].status='paid';ps[i].pdate=new Date().toISOString();ps[i].notes=nt;}
+  S.s('pays',ps);cm('pnm');
+  if(src==='det'){DP=ps.filter(p=>p.cid===CID);rDP();}else rGP();
+}
+function unPay(id,src){
+  if(!confirm('Undo this payment?'))return;
+  let ps=S.g('pays')||[];const i=ps.findIndex(x=>x._id===id);
+  if(i>=0){ps[i].status='pending';ps[i].pdate=null;ps[i].notes='';}
+  S.s('pays',ps);
+  if(src==='det'){DP=ps.filter(p=>p.cid===CID);rDP();}else rGP();
+}
+function gPout(id){
+  if(!confirm('Mark this payout as given?'))return;
+  let po=S.g('pouts')||[];const i=po.findIndex(x=>x._id===id);
+  if(i>=0){po[i].status='given';po[i].gdate=new Date().toISOString();}
+  S.s('pouts',po);
+  if(CID){let cs=S.g('comms')||[];const ci=cs.findIndex(x=>x._id===CID);if(ci>=0){const mi=cs[ci].members?.findIndex(m=>m.uid===po[i]?.uid);if(mi>=0)cs[ci].members[mi].taken=true;S.s('comms',cs);}}
+  DO=po.filter(p=>p.cid===CID);rDO();
+}
+function gPoutG(id){
+  if(!confirm('Mark as given?'))return;
+  let po=S.g('pouts')||[];const i=po.findIndex(x=>x._id===id);
+  if(i>=0){po[i].status='given';po[i].gdate=new Date().toISOString();}
+  S.s('pouts',po);rGO();
+}
+
+// ── TABS ────────────────────────────────────────────────────
+function stb(id){
+  document.querySelectorAll('.tbc').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
+  document.getElementById(id)?.classList.add('on');
+  document.querySelectorAll('.tb').forEach(b=>{if(b.getAttribute('onclick')?.includes(id))b.classList.add('on');});
+}
+
+// ── REPORTS ─────────────────────────────────────────────────
+function lRep(){
+  const cs=S.g('comms')||[],ps=S.g('pays')||[],po=S.g('pouts')||[];
+  const w=document.getElementById('rep-w');
+  if(!cs.length){w.innerHTML='<div class="emp"><div class="emp-i">📈</div><h3>No committees yet</h3></div>';return;}
+  w.innerHTML=cs.map(c=>{
+    const cp=ps.filter(p=>p.cid===c._id);
+    const co=po.filter(p=>p.cid===c._id);
+    const coll=cp.filter(p=>p.status==='paid').reduce((s,p)=>s+p.amt,0);
+    const pend=cp.filter(p=>p.status==='pending').reduce((s,p)=>s+p.amt,0);
+    const dist=co.filter(p=>p.status==='given').reduce((s,p)=>s+p.amt,0);
+    const sb={active:'bg',completed:'bb',paused:'bo'}[c.status]||'bo';
+    return`<div class="rc"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px"><h4>🏦 ${c.name}</h4><span class="badge ${sb}">${c.status.toUpperCase()}</span></div>
+      <div class="rr"><span class="k">Members</span><span class="v bl">${c.total}</span></div>
+      <div class="rr"><span class="k">Monthly Amount</span><span class="v">${pkr(c.amt)}</span></div>
+      <div class="rr"><span class="k">Pool per Turn</span><span class="v">${pkr(c.amt*c.total)}</span></div>
+      <div class="rr"><span class="k">Total Collected</span><span class="v gr">${pkr(coll)}</span></div>
+      <div class="rr"><span class="k">Pending Collection</span><span class="v re">${pkr(pend)}</span></div>
+      <div class="rr"><span class="k">Distributed</span><span class="v gr">${pkr(dist)}</span></div>
+      <div class="rr"><span class="k">Start Date</span><span class="v bl">${new Date(c.start).toLocaleDateString()}</span></div>
+    </div>`;
+  }).join('');
+}
+
+// ── PROFILE ─────────────────────────────────────────────────
+function lProf(){
+  document.getElementById('pav').textContent=ME.role==='admin'?'🛡️':'👤';
+  document.getElementById('pn').textContent=ME.name;
+  document.getElementById('pr').textContent=ME.role.toUpperCase();
+  document.getElementById('pi').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">${[['Username',ME.username],['Phone',ME.phone||'—'],['CNIC',ME.cnic||'—'],['Email',ME.email||'—']].map(([l,v])=>`<div><div style="font-size:.63rem;color:var(--tx3);font-family:var(--fm);letter-spacing:1px;margin-bottom:3px">${l.toUpperCase()}</div><div style="font-size:.88rem">${v}</div></div>`).join('')}</div>`;
+  document.getElementById('pw-al').innerHTML='';
+}
+function chpw(){
+  const np=document.getElementById('np').value,cp=document.getElementById('cp').value,al=document.getElementById('pw-al');
+  al.innerHTML='';
+  if(!np||np.length<6){al.innerHTML='<div class="al ale">Min 6 characters</div>';return;}
+  if(np!==cp){al.innerHTML='<div class="al ale">Passwords do not match</div>';return;}
+  let us=S.g('users')||[];const i=us.findIndex(x=>x._id===ME._id);
+  if(i>=0){us[i].password=np;ME.password=np;S.s('users',us);}
+  al.innerHTML='<div class="al alo">✓ Password updated!</div>';
+  document.getElementById('np').value='';document.getElementById('cp').value='';
+}
+
+// ── MODALS ──────────────────────────────────────────────────
+function om(id){
+  const m=document.getElementById(id);if(!m)return;m.classList.add('on');
+  if(id==='um'){document.getElementById('um-id').value='';document.getElementById('um-t').textContent='Add User';['um-n','um-u','um-p','um-ph','um-cn','um-em'].forEach(x=>{const e=document.getElementById(x);if(e){e.value='';e.placeholder=x==='um-p'?'••••••••':e.placeholder;}});document.getElementById('um-r').value='member';document.getElementById('um-sw').style.display='none';document.getElementById('um-al').innerHTML='';}
+  if(id==='cm'){['cm-n','cm-a','cm-c'].forEach(x=>{const e=document.getElementById(x);if(e)e.value='';});document.getElementById('cm-sd').value=new Date().toISOString().split('T')[0];document.getElementById('cm-sl').innerHTML='';document.getElementById('cm-al').innerHTML='';}
+}
+function cm(id){document.getElementById(id)?.classList.remove('on');}
+document.querySelectorAll('.mo').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on');}));
+</script>
+</body>
+</html>
