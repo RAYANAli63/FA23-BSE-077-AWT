@@ -301,6 +301,11 @@ select option{background:var(--card)}
 </div></div>
 
 <script>
+// On load: show member tab so Register is visible
+window.addEventListener('load', function(){
+  atab('mem');
+});
+
 // ── DB ──────────────────────────────────────────────────────
 const S={
   g:k=>{try{return JSON.parse(localStorage.getItem('cp3_'+k)||'null')}catch{return null}},
@@ -321,7 +326,13 @@ const MO=['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','
 const pkr=n=>'PKR '+(n||0).toLocaleString('en-PK');
 
 // ── AUTH ────────────────────────────────────────────────────
-function ss(n){document.querySelectorAll('.ascreen').forEach(s=>s.classList.remove('on'));document.getElementById('app').style.display='none';document.getElementById('s-'+n)?.classList.add('on')}
+function ss(n){
+  document.querySelectorAll('.ascreen').forEach(s=>s.classList.remove('on'));
+  document.getElementById('app').style.display='none';
+  var el=document.getElementById('s-'+n);
+  if(el)el.classList.add('on');
+  if(n==='login')atab('mem');
+}
 function atab(t){
   document.querySelectorAll('.atab').forEach((b,i)=>b.classList.toggle('on',i===(t==='adm'?0:1)));
   document.getElementById('adm-form').style.display=t==='adm'?'':'none';
@@ -371,7 +382,7 @@ function lo(){ME=null;document.getElementById('app').style.display='none';ss('lo
 // ── APP ─────────────────────────────────────────────────────
 function go(){
   document.querySelectorAll('.ascreen').forEach(s=>s.classList.remove('on'));
-  document.getElementById('app').style.display='';
+  document.getElementById('app').style.display='block';
   document.getElementById('sb-n').textContent=ME.name;
   document.getElementById('sb-r').textContent=ME.role.toUpperCase();
   bNav();aRole();nav('dash');
