@@ -4,14 +4,14 @@ import { toast } from 'react-toastify';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../hooks/useAuth';
 
-function AuthCard({ icon, title, subtitle, children }) {
+function AuthCard({ icon, title, subtitle, children, wide }) {
   return (
-    <div style={{ minHeight: 'calc(100vh - 64px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', background: 'radial-gradient(ellipse at top, rgba(79,142,247,0.05) 0%, transparent 60%)' }}>
-      <div style={{ width: '100%', maxWidth: '420px' }}>
-        <div className="card fade-in">
+    <div style={{ minHeight: 'calc(100vh - 64px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', background: 'radial-gradient(ellipse at top, rgba(79,142,247,0.07) 0%, transparent 60%)' }}>
+      <div style={{ width: '100%', maxWidth: wide ? '500px' : '420px' }}>
+        <div className="card fade-in" style={{ boxShadow: 'var(--shadow)' }}>
           <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-            <div style={{ fontSize: '40px', marginBottom: '12px' }}>{icon}</div>
-            <h1 style={{ fontSize: '22px' }}>{title}</h1>
+            <div style={{ width: '60px', height: '60px', borderRadius: '16px', background: 'linear-gradient(135deg,var(--accent),var(--accent2))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', margin: '0 auto 14px', boxShadow: 'var(--shadow2)' }}>{icon}</div>
+            <h1 style={{ fontSize: '22px', fontWeight: 700 }}>{title}</h1>
             <p style={{ color: 'var(--text2)', marginTop: '6px', fontSize: '14px' }}>{subtitle}</p>
           </div>
           {children}
@@ -21,33 +21,50 @@ function AuthCard({ icon, title, subtitle, children }) {
   );
 }
 
+function Input({ label, hint, ...props }) {
+  return (
+    <div className="form-group">
+      <label className="form-label">{label}</label>
+      <input className="form-control" {...props} />
+      {hint && <p className="form-hint">{hint}</p>}
+    </div>
+  );
+}
+
 export function LoginPage() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
+  const [showPw, setShowPw] = useState(false);
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await signIn(form);
+    const { data, error } = await signIn(form);
     if (error) { toast.error(error.message); setLoading(false); return; }
-    toast.success('Welcome back! 👋');
+    // Generate session user ID
+    const sessionId = data?.user ? `VS-${data.user.id.slice(0, 8).toUpperCase()}` : null;
+    toast.success(`Welcome back! 👋${sessionId ? ` Your Session ID: ${sessionId}` : ''}`, { autoClose: 5000 });
     navigate('/');
   };
 
   return (
-    <AuthCard icon="🗳️" title="Sign In" subtitle="Welcome back to VoteSecure">
+    <AuthCard icon="🗳️" title="Sign In to VoteSecure" subtitle="Secure elections, trusted results">
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label className="form-label">Email Address</label>
-          <input className="form-control" type="email" placeholder="you@example.com"
-            value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
-        </div>
+        <Input label="Email Address" type="email" placeholder="you@example.com"
+          value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
         <div className="form-group">
           <label className="form-label">Password</label>
-          <input className="form-control" type="password" placeholder="••••••••"
-            value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} required />
+          <div style={{ position: 'relative' }}>
+            <input className="form-control" type={showPw ? 'text' : 'password'} placeholder="••••••••"
+              value={form.password} onChange={e => setForm({ ...form, password: e.target.value })}
+              required style={{ paddingRight: '44px' }} />
+            <button type="button" onClick={() => setShowPw(p => !p)}
+              style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text3)', fontSize: '16px' }}>
+              {showPw ? '🙈' : '👁️'}
+            </button>
+          </div>
         </div>
         <div style={{ textAlign: 'right', marginTop: '-12px', marginBottom: '20px' }}>
           <Link to="/forgot-password" style={{ fontSize: '13px', color: 'var(--text2)' }}>Forgot password?</Link>
@@ -56,8 +73,9 @@ export function LoginPage() {
           {loading ? <><span className="spinner" /> Signing in...</> : 'Sign In →'}
         </button>
       </form>
-      <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '14px', color: 'var(--text2)' }}>
-        New here? <Link to="/register">Create an account</Link>
+      <div className="divider" />
+      <p style={{ textAlign: 'center', fontSize: '14px', color: 'var(--text2)' }}>
+        New here? <Link to="/register" style={{ fontWeight: 600 }}>Create an account</Link>
       </p>
     </AuthCard>
   );
@@ -76,41 +94,34 @@ export function RegisterPage() {
     setLoading(true);
     const { error } = await signUp(form);
     if (error) { toast.error(error.message); setLoading(false); return; }
-    toast.success('Account created! You can now log in. ✅');
+    toast.success('Account created! Please sign in. ✅');
     navigate('/login');
   };
 
   const set = k => e => setForm({ ...form, [k]: e.target.value });
 
   return (
-    <AuthCard icon="✨" title="Create Account" subtitle="Join VoteSecure today">
+    <AuthCard icon="✨" title="Create Account" subtitle="Join VoteSecure today" wide>
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label className="form-label">Full Name *</label>
-          <input className="form-control" placeholder="Your full name" value={form.fullName} onChange={set('fullName')} required />
+        <div className="grid-2" style={{ gap: '16px' }}>
+          <Input label="Full Name *" placeholder="Your full name" value={form.fullName} onChange={set('fullName')} required />
+          <Input label="Phone Number" placeholder="+92 3xx xxxxxxx" value={form.phone} onChange={set('phone')} />
         </div>
-        <div className="form-group">
-          <label className="form-label">Email Address *</label>
-          <input className="form-control" type="email" placeholder="you@example.com" value={form.email} onChange={set('email')} required />
+        <Input label="Email Address *" type="email" placeholder="you@example.com" value={form.email} onChange={set('email')} required />
+        <div className="grid-2" style={{ gap: '16px' }}>
+          <Input label="Password *" type="password" placeholder="Min 8 characters" value={form.password} onChange={set('password')} required />
+          <Input label="Confirm Password *" type="password" placeholder="Repeat password" value={form.confirm} onChange={set('confirm')} required />
         </div>
-        <div className="form-group">
-          <label className="form-label">Phone Number</label>
-          <input className="form-control" placeholder="+92 3xx xxxxxxx" value={form.phone} onChange={set('phone')} />
-        </div>
-        <div className="form-group">
-          <label className="form-label">Password *</label>
-          <input className="form-control" type="password" placeholder="Min 8 characters" value={form.password} onChange={set('password')} required />
-        </div>
-        <div className="form-group">
-          <label className="form-label">Confirm Password *</label>
-          <input className="form-control" type="password" placeholder="Repeat password" value={form.confirm} onChange={set('confirm')} required />
+        <div className="alert alert-info" style={{ fontSize: '13px', marginBottom: '20px' }}>
+          🔑 After registration, each login session generates a unique <strong>User ID</strong> shown in your profile menu.
         </div>
         <button type="submit" className="btn btn-primary btn-full btn-lg" disabled={loading}>
-          {loading ? <><span className="spinner" /> Creating...</> : 'Create Account'}
+          {loading ? <><span className="spinner" /> Creating account...</> : 'Create Account →'}
         </button>
       </form>
-      <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '14px', color: 'var(--text2)' }}>
-        Already have an account? <Link to="/login">Sign in</Link>
+      <div className="divider" />
+      <p style={{ textAlign: 'center', fontSize: '14px', color: 'var(--text2)' }}>
+        Already have an account? <Link to="/login" style={{ fontWeight: 600 }}>Sign in</Link>
       </p>
     </AuthCard>
   );
@@ -132,23 +143,24 @@ export function ForgotPasswordPage() {
   };
 
   return (
-    <AuthCard icon="🔑" title="Reset Password" subtitle="Enter your email for a reset link">
+    <AuthCard icon="🔑" title="Reset Password" subtitle="Enter your email to receive a reset link">
       {sent ? (
-        <div className="alert alert-success" style={{ textAlign: 'center' }}>
-          ✅ Reset link sent! Check your email inbox.
+        <div className="alert alert-success" style={{ textAlign: 'center', justifyContent: 'center', padding: '20px' }}>
+          <div>
+            <div style={{ fontSize: '32px', marginBottom: '8px' }}>📬</div>
+            <p style={{ fontWeight: 600 }}>Reset link sent!</p>
+            <p style={{ fontSize: '13px', marginTop: '4px' }}>Check your email inbox and click the link.</p>
+          </div>
         </div>
       ) : (
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label">Email Address</label>
-            <input className="form-control" type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="you@example.com" />
-          </div>
-          <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
-            {loading ? 'Sending...' : 'Send Reset Link'}
+          <Input label="Email Address" type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="you@example.com" />
+          <button type="submit" className="btn btn-primary btn-full btn-lg" disabled={loading}>
+            {loading ? 'Sending...' : 'Send Reset Link →'}
           </button>
         </form>
       )}
-      <p style={{ textAlign: 'center', marginTop: '16px', fontSize: '14px', color: 'var(--text2)' }}>
+      <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '14px', color: 'var(--text2)' }}>
         <Link to="/login">← Back to login</Link>
       </p>
     </AuthCard>
@@ -172,18 +184,12 @@ export function ResetPasswordPage() {
   };
 
   return (
-    <AuthCard icon="🔒" title="New Password" subtitle="Set your new password">
+    <AuthCard icon="🔒" title="Set New Password" subtitle="Choose a strong password">
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label className="form-label">New Password</label>
-          <input className="form-control" type="password" value={password} onChange={e => setPassword(e.target.value)} required minLength={8} placeholder="Min 8 characters" />
-        </div>
-        <div className="form-group">
-          <label className="form-label">Confirm Password</label>
-          <input className="form-control" type="password" value={confirm} onChange={e => setConfirm(e.target.value)} required placeholder="Repeat password" />
-        </div>
-        <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
-          {loading ? 'Updating...' : 'Update Password'}
+        <Input label="New Password" type="password" value={password} onChange={e => setPassword(e.target.value)} required minLength={8} placeholder="Min 8 characters" />
+        <Input label="Confirm Password" type="password" value={confirm} onChange={e => setConfirm(e.target.value)} required placeholder="Repeat password" />
+        <button type="submit" className="btn btn-primary btn-full btn-lg" disabled={loading}>
+          {loading ? 'Updating...' : 'Update Password →'}
         </button>
       </form>
     </AuthCard>

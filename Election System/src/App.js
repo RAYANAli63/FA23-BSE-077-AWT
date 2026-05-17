@@ -48,42 +48,39 @@ function ProtectedRoute({ children, allowedRoles }) {
 
 function AppContent() {
   const { loading } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   if (loading) return <LoadingSpinner fullPage />;
 
   return (
     <>
-      <Navbar />
+      <Navbar onSidebarToggle={() => setSidebarOpen(o => !o)} />
+      {/* Overlay for mobile sidebar */}
+      {sidebarOpen && (
+        <div onClick={() => setSidebarOpen(false)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 85, backdropFilter: 'blur(2px)' }} />
+      )}
       <Routes>
-        {/* Public */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/election/:id" element={<ElectionDetailPage />} />
         <Route path="/results/:id" element={<ResultsPage />} />
-
-        {/* Auth */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
-
-        {/* Admin */}
-        <Route path="/admin" element={<ProtectedRoute allowedRoles={['super_admin']}><AdminDashboard /></ProtectedRoute>} />
-        <Route path="/admin/requests" element={<ProtectedRoute allowedRoles={['super_admin']}><AdminRequests /></ProtectedRoute>} />
-        <Route path="/admin/elections" element={<ProtectedRoute allowedRoles={['super_admin']}><AdminElections /></ProtectedRoute>} />
-        <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['super_admin']}><AdminUsers /></ProtectedRoute>} />
-        <Route path="/admin/audit" element={<ProtectedRoute allowedRoles={['super_admin']}><AuditLogs /></ProtectedRoute>} />
-
-        {/* Creator */}
-        <Route path="/creator" element={<ProtectedRoute allowedRoles={['election_creator','super_admin']}><CreatorDashboard /></ProtectedRoute>} />
-        <Route path="/creator/new" element={<ProtectedRoute allowedRoles={['election_creator','super_admin']}><CreateElection /></ProtectedRoute>} />
-        <Route path="/creator/election/:id/edit" element={<ProtectedRoute allowedRoles={['election_creator','super_admin']}><EditElection /></ProtectedRoute>} />
-        <Route path="/creator/election/:id/candidates" element={<ProtectedRoute allowedRoles={['election_creator','super_admin']}><ManageCandidates /></ProtectedRoute>} />
-        <Route path="/creator/election/:id/voters" element={<ProtectedRoute allowedRoles={['election_creator','super_admin']}><VoterListPage /></ProtectedRoute>} />
-        <Route path="/creator/election/:id/control" element={<ProtectedRoute allowedRoles={['election_creator','super_admin']}><ElectionControl /></ProtectedRoute>} />
-
-        {/* Voter */}
+        <Route path="/admin" element={<ProtectedRoute allowedRoles={['super_admin']}><AdminDashboard sidebarOpen={sidebarOpen} onSidebarClose={() => setSidebarOpen(false)} /></ProtectedRoute>} />
+        <Route path="/admin/requests" element={<ProtectedRoute allowedRoles={['super_admin']}><AdminRequests sidebarOpen={sidebarOpen} onSidebarClose={() => setSidebarOpen(false)} /></ProtectedRoute>} />
+        <Route path="/admin/elections" element={<ProtectedRoute allowedRoles={['super_admin']}><AdminElections sidebarOpen={sidebarOpen} onSidebarClose={() => setSidebarOpen(false)} /></ProtectedRoute>} />
+        <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['super_admin']}><AdminUsers sidebarOpen={sidebarOpen} onSidebarClose={() => setSidebarOpen(false)} /></ProtectedRoute>} />
+        <Route path="/admin/audit" element={<ProtectedRoute allowedRoles={['super_admin']}><AuditLogs sidebarOpen={sidebarOpen} onSidebarClose={() => setSidebarOpen(false)} /></ProtectedRoute>} />
+        <Route path="/creator" element={<ProtectedRoute allowedRoles={['election_creator','super_admin']}><CreatorDashboard sidebarOpen={sidebarOpen} onSidebarClose={() => setSidebarOpen(false)} /></ProtectedRoute>} />
+        <Route path="/creator/new" element={<ProtectedRoute allowedRoles={['election_creator','super_admin']}><CreateElection sidebarOpen={sidebarOpen} onSidebarClose={() => setSidebarOpen(false)} /></ProtectedRoute>} />
+        <Route path="/creator/election/:id/edit" element={<ProtectedRoute allowedRoles={['election_creator','super_admin']}><EditElection sidebarOpen={sidebarOpen} onSidebarClose={() => setSidebarOpen(false)} /></ProtectedRoute>} />
+        <Route path="/creator/election/:id/candidates" element={<ProtectedRoute allowedRoles={['election_creator','super_admin']}><ManageCandidates sidebarOpen={sidebarOpen} onSidebarClose={() => setSidebarOpen(false)} /></ProtectedRoute>} />
+        <Route path="/creator/election/:id/voters" element={<ProtectedRoute allowedRoles={['election_creator','super_admin']}><VoterListPage sidebarOpen={sidebarOpen} onSidebarClose={() => setSidebarOpen(false)} /></ProtectedRoute>} />
+        <Route path="/creator/election/:id/control" element={<ProtectedRoute allowedRoles={['election_creator','super_admin']}><ElectionControl sidebarOpen={sidebarOpen} onSidebarClose={() => setSidebarOpen(false)} /></ProtectedRoute>} />
         <Route path="/dashboard" element={<ProtectedRoute><VoterDashboard /></ProtectedRoute>} />
         <Route path="/vote/:id" element={<ProtectedRoute><VotingPage /></ProtectedRoute>} />
-
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </>
@@ -102,7 +99,8 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <AppContent />
-        <ToastContainer position="top-right" theme={theme} autoClose={3000} />
+        <ToastContainer position="top-right" theme={theme} autoClose={3500}
+          toastStyle={{ borderRadius: '12px', fontSize: '14px' }} />
       </AuthProvider>
     </BrowserRouter>
   );

@@ -6,10 +6,10 @@ import { useAuth } from '../../hooks/useAuth';
 import { Sidebar, creatorLinks } from '../../components/shared/Sidebar';
 import LoadingSpinner from '../../components/shared/LoadingSpinner';
 
-function CreatorLayout({ children }) {
+function CreatorLayout({ children, sidebarOpen, onSidebarClose }) {
   return (
     <div className="dashboard-layout">
-      <Sidebar links={creatorLinks} title="Creator Panel" />
+      <Sidebar links={creatorLinks} title="Creator Panel" mobileOpen={sidebarOpen} onClose={onSidebarClose} />
       <div className="dashboard-content">{children}</div>
     </div>
   );
@@ -18,7 +18,7 @@ function CreatorLayout({ children }) {
 const CATEGORIES = ['Student Body', 'Corporate', 'Political', 'Community', 'NGO', 'Academic', 'Sports', 'Government', 'Other'];
 
 // ─── CREATOR DASHBOARD ────────────────────────────────────────────────────────
-export function CreatorDashboard() {
+export function CreatorDashboard({ sidebarOpen, onSidebarClose }) {
   const { user, profile } = useAuth();
   const navigate = useNavigate();
   const [elections, setElections] = useState([]);
@@ -88,7 +88,7 @@ export function CreatorDashboard() {
   }
 
   return (
-    <CreatorLayout>
+    <CreatorLayout sidebarOpen={sidebarOpen} onSidebarClose={onSidebarClose}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', flexWrap: 'wrap', gap: '12px' }}>
         <div><h1 style={{ fontSize: '24px', fontWeight: 700 }}>My Elections</h1><p style={{ color: 'var(--text2)', marginTop: '4px' }}>Create and manage your elections</p></div>
         <Link to="/creator/new" className="btn btn-primary">➕ New Election</Link>
@@ -175,7 +175,7 @@ function ElectionForm({ initial, onSubmit, loading, submitLabel }) {
 }
 
 // ─── CREATE ELECTION ──────────────────────────────────────────────────────────
-export function CreateElection() {
+export function CreateElection({ sidebarOpen, onSidebarClose }) {
   const { user, profile } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -192,7 +192,7 @@ export function CreateElection() {
   }
 
   return (
-    <CreatorLayout>
+    <CreatorLayout sidebarOpen={sidebarOpen} onSidebarClose={onSidebarClose}>
       <div style={{ marginBottom: '24px' }}><button onClick={() => navigate('/creator')} className="btn btn-outline btn-sm">← Back</button></div>
       <div className="page-header"><h1>Create New Election</h1><p>Set up the details for your election</p></div>
       <div style={{ maxWidth: '680px' }}>
@@ -203,7 +203,7 @@ export function CreateElection() {
 }
 
 // ─── EDIT ELECTION ────────────────────────────────────────────────────────────
-export function EditElection() {
+export function EditElection({ sidebarOpen, onSidebarClose }) {
   const { id } = useParams();
   const { user, profile } = useAuth();
   const navigate = useNavigate();
@@ -233,7 +233,7 @@ export function EditElection() {
   };
 
   return (
-    <CreatorLayout>
+    <CreatorLayout sidebarOpen={sidebarOpen} onSidebarClose={onSidebarClose}>
       <div style={{ marginBottom: '24px' }}><button onClick={() => navigate('/creator')} className="btn btn-outline btn-sm">← Back</button></div>
       <div className="page-header"><h1>Edit Election</h1><p>Update election details (only available before publishing)</p></div>
       <div style={{ maxWidth: '680px' }}>
@@ -244,7 +244,7 @@ export function EditElection() {
 }
 
 // ─── MANAGE CANDIDATES ────────────────────────────────────────────────────────
-export function ManageCandidates() {
+export function ManageCandidates({ sidebarOpen, onSidebarClose }) {
   const { id } = useParams();
   const { user, profile } = useAuth();
   const navigate = useNavigate();
@@ -298,7 +298,7 @@ export function ManageCandidates() {
   }
 
   return (
-    <CreatorLayout>
+    <CreatorLayout sidebarOpen={sidebarOpen} onSidebarClose={onSidebarClose}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
         <div>
           <button onClick={() => navigate('/creator')} className="btn btn-outline btn-sm" style={{ marginBottom: '8px' }}>← Back</button>
@@ -364,56 +364,152 @@ export function ManageCandidates() {
 }
 
 // ─── VOTER LIST ───────────────────────────────────────────────────────────────
-export function VoterListPage() {
+
+// ─── VOTER LIST PAGE (with Session User IDs) ──────────────────────────────────
+export function VoterListPage({ sidebarOpen, onSidebarClose }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const [election, setElection] = useState(null);
   const [voters, setVoters] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState('all');
 
   useEffect(() => {
     supabase.from('elections').select('*').eq('id', id).single().then(({ data }) => setElection(data));
-    supabase.from('voter_registrations').select('*, profiles(full_name, email, phone)').eq('election_id', id).order('registered_at')
+    supabase.from('voter_registrations')
+      .select('*, profiles(id, full_name, email, phone)')
+      .eq('election_id', id).order('registered_at')
       .then(({ data }) => { setVoters(data || []); setLoading(false); });
   }, [id]);
 
-  const statusColor = { registered: 'var(--accent)', finalized: 'var(--success)', waitlisted: 'var(--warning)', voted: 'var(--accent2)' };
-  const counts = { registered: voters.filter(v => v.status === 'registered').length, finalized: voters.filter(v => v.status === 'finalized').length, voted: voters.filter(v => v.status === 'voted').length, waitlisted: voters.filter(v => v.status === 'waitlisted').length };
+  const counts = {
+    all: voters.length,
+    registered: voters.filter(v => v.status === 'registered').length,
+    finalized: voters.filter(v => v.status === 'finalized').length,
+    voted: voters.filter(v => v.status === 'voted').length,
+    waitlisted: voters.filter(v => v.status === 'waitlisted').length
+  };
+
+  const filtered = voters.filter(v => {
+    const matchFilter = filter === 'all' || v.status === filter;
+    const matchSearch = !search || v.profiles?.full_name?.toLowerCase().includes(search.toLowerCase()) || v.profiles?.email?.toLowerCase().includes(search.toLowerCase());
+    return matchFilter && matchSearch;
+  });
 
   return (
-    <CreatorLayout>
+    <CreatorLayout sidebarOpen={sidebarOpen} onSidebarClose={onSidebarClose}>
       <div style={{ marginBottom: '24px' }}>
-        <button onClick={() => navigate('/creator')} className="btn btn-outline btn-sm" style={{ marginBottom: '8px' }}>← Back</button>
-        <h1 style={{ fontSize: '22px', fontWeight: 700 }}>Voter List</h1>
-        <p style={{ color: 'var(--text2)' }}>{election?.title}</p>
+        <button onClick={() => navigate('/creator')} className="btn btn-outline btn-sm" style={{ marginBottom: '12px' }}>← Back</button>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+          <div>
+            <h1 style={{ fontSize: '22px', fontWeight: 700 }}>Voter List</h1>
+            <p style={{ color: 'var(--text2)', marginTop: '3px' }}>{election?.title}</p>
+          </div>
+          <div className="alert alert-info" style={{ marginBottom: 0, fontSize: '12px', padding: '8px 14px' }}>
+            🔑 Session IDs shown for voters who have cast votes
+          </div>
+        </div>
       </div>
+
       <div className="grid-4" style={{ marginBottom: '24px' }}>
-        {[{ label: 'Registered', value: counts.registered, color: 'var(--accent)' }, { label: 'Finalized', value: counts.finalized, color: 'var(--success)' }, { label: 'Voted', value: counts.voted, color: 'var(--accent2)' }, { label: 'Waitlisted', value: counts.waitlisted, color: 'var(--warning)' }]
-          .map(s => <div key={s.label} className="stat-card"><div className="stat-value" style={{ color: s.color }}>{s.value}</div><div className="stat-label">{s.label}</div></div>)}
+        {[
+          { label: 'Registered', value: counts.registered, color: 'var(--accent)', icon: '📝' },
+          { label: 'Finalized', value: counts.finalized, color: 'var(--success)', icon: '✅' },
+          { label: 'Voted', value: counts.voted, color: 'var(--accent2)', icon: '🗳️' },
+          { label: 'Waitlisted', value: counts.waitlisted, color: 'var(--warning)', icon: '⏳' },
+        ].map(s => (
+          <div key={s.label} className="stat-card" style={{ cursor: 'pointer' }} onClick={() => setFilter(s.label.toLowerCase())}>
+            <div className="stat-icon">{s.icon}</div>
+            <div className="stat-value" style={{ color: s.color }}>{s.value}</div>
+            <div className="stat-label">{s.label}</div>
+          </div>
+        ))}
       </div>
-      {election?.is_locked && <div className="alert alert-info" style={{ marginBottom: '20px' }}>🔒 Voter list is locked. {counts.finalized + counts.voted} voters finalized with secret codes.</div>}
+
+      {election?.is_locked && (
+        <div className="alert alert-info" style={{ marginBottom: '20px' }}>
+          🔒 Voter list locked. {counts.finalized + counts.voted} voters authorized with secret codes.
+        </div>
+      )}
+
+      {/* Filters */}
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
+        <div className="search-input" style={{ flex: 1, minWidth: '200px', position: 'relative' }}>
+          <span className="search-icon">🔍</span>
+          <input className="form-control" placeholder="Search voters..." value={search}
+            onChange={e => setSearch(e.target.value)} style={{ paddingLeft: '36px' }} />
+        </div>
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+          {['all','registered','finalized','voted','waitlisted'].map(f => (
+            <button key={f} onClick={() => setFilter(f)}
+              className={`btn btn-sm ${filter === f ? 'btn-primary' : 'btn-outline'}`}>
+              {f.charAt(0).toUpperCase() + f.slice(1)} {f === 'all' ? `(${counts.all})` : `(${counts[f] || 0})`}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {loading ? <LoadingSpinner /> : (
         <div className="card">
           <div className="table-wrap">
             <table>
-              <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Secret Code</th><th>Status</th><th>Registered</th></tr></thead>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Voter Name</th>
+                  <th>Email</th>
+                  <th>Session User ID</th>
+                  <th>Secret Code</th>
+                  <th>Status</th>
+                  <th>Voted At</th>
+                </tr>
+              </thead>
               <tbody>
-                {voters.map((v, i) => (
-                  <tr key={v.id}>
-                    <td style={{ color: 'var(--text3)' }}>{i + 1}</td>
-                    <td style={{ fontWeight: 500 }}>{v.profiles?.full_name}</td>
-                    <td style={{ fontSize: '13px', color: 'var(--text2)' }}>{v.profiles?.email}</td>
-                    <td style={{ fontFamily: 'monospace', fontSize: '13px', color: 'var(--accent2)' }}>
-                      {v.secret_code ? `****${v.secret_code.slice(-4)}` : '—'}
-                    </td>
-                    <td><span style={{ color: statusColor[v.status], fontWeight: 500, fontSize: '13px' }}>● {v.status}</span></td>
-                    <td style={{ fontSize: '12px', color: 'var(--text3)' }}>{new Date(v.registered_at).toLocaleString()}</td>
-                  </tr>
-                ))}
-                {voters.length === 0 && <tr><td colSpan={6} style={{ textAlign: 'center', color: 'var(--text2)', padding: '32px' }}>No voters registered yet</td></tr>}
+                {filtered.map((v, i) => {
+                  const sessionId = v.profiles?.id ? `VS-${v.profiles.id.slice(0,8).toUpperCase()}` : '—';
+                  return (
+                    <tr key={v.id}>
+                      <td style={{ color: 'var(--text3)', fontWeight: 600 }}>{i + 1}</td>
+                      <td>
+                        <div style={{ fontWeight: 500 }}>{v.profiles?.full_name}</div>
+                        <div style={{ fontSize: '11px', color: 'var(--text3)' }}>{v.profiles?.phone}</div>
+                      </td>
+                      <td style={{ fontSize: '13px', color: 'var(--text2)' }}>{v.profiles?.email}</td>
+                      <td>
+                        {v.status === 'voted' ? (
+                          <span className="voter-id-chip" title={`Full ID: ${v.profiles?.id}`}>{sessionId}</span>
+                        ) : (
+                          <span style={{ color: 'var(--text3)', fontSize: '12px' }}>—</span>
+                        )}
+                      </td>
+                      <td style={{ fontFamily: 'monospace', fontSize: '13px', color: 'var(--accent2)' }}>
+                        {v.secret_code ? `****${v.secret_code.slice(-4)}` : '—'}
+                      </td>
+                      <td>
+                        <span className={`badge badge-${v.status === 'voted' ? 'completed' : v.status === 'finalized' ? 'approved' : v.status === 'waitlisted' ? 'pending' : 'published'}`}>
+                          {v.status === 'voted' ? '🗳️ Voted' : v.status === 'finalized' ? '✅ Finalized' : v.status === 'waitlisted' ? '⏳ Waitlisted' : '📝 Registered'}
+                        </span>
+                      </td>
+                      <td style={{ fontSize: '12px', color: 'var(--text3)' }}>
+                        {v.voted_at ? new Date(v.voted_at).toLocaleString() : '—'}
+                      </td>
+                    </tr>
+                  );
+                })}
+                {filtered.length === 0 && (
+                  <tr><td colSpan={7} style={{ textAlign: 'center', color: 'var(--text2)', padding: '40px' }}>
+                    {search ? 'No voters match your search' : 'No voters registered yet'}
+                  </td></tr>
+                )}
               </tbody>
             </table>
           </div>
+          {filtered.length > 0 && (
+            <p style={{ fontSize: '12px', color: 'var(--text3)', textAlign: 'right', marginTop: '12px' }}>
+              Showing {filtered.length} of {voters.length} voters
+            </p>
+          )}
         </div>
       )}
     </CreatorLayout>
@@ -421,14 +517,14 @@ export function VoterListPage() {
 }
 
 // ─── ELECTION CONTROL ─────────────────────────────────────────────────────────
-export function ElectionControl() {
+export function ElectionControl({ sidebarOpen, onSidebarClose }) {
   const { id } = useParams();
   const { user, profile } = useAuth();
   const navigate = useNavigate();
   const [election, setElection] = useState(null);
   const [loading, setLoading] = useState(true);
   const [changing, setChanging] = useState(false);
-  const [voterStats, setVoterStats] = useState({ registered: 0, finalized: 0, voted: 0 });
+  const [voterStats, setVoterStats] = useState({ registered: 0, finalized: 0, voted: 0, waitlisted: 0 });
 
   useEffect(() => {
     supabase.from('elections').select('*').eq('id', id).single().then(({ data }) => { setElection(data); setLoading(false); });
@@ -437,7 +533,12 @@ export function ElectionControl() {
 
   async function loadStats() {
     const { data } = await supabase.from('voter_registrations').select('status').eq('election_id', id);
-    if (data) setVoterStats({ registered: data.filter(v => v.status === 'registered').length, finalized: data.filter(v => v.status === 'finalized').length, voted: data.filter(v => v.status === 'voted').length });
+    if (data) setVoterStats({
+      registered: data.filter(v => v.status === 'registered').length,
+      finalized: data.filter(v => v.status === 'finalized').length,
+      voted: data.filter(v => v.status === 'voted').length,
+      waitlisted: data.filter(v => v.status === 'waitlisted').length
+    });
   }
 
   async function changeStatus(newStatus) {
@@ -445,16 +546,13 @@ export function ElectionControl() {
     setChanging(true);
     try {
       if (newStatus === 'active') {
-        // Finalize all registered voters & generate secret codes
         await supabase.rpc('finalize_voters', { p_election_id: id });
-        // Notify all finalized voters
         const { data: voters } = await supabase.from('voter_registrations').select('voter_id, secret_code').eq('election_id', id).eq('status', 'finalized');
         for (const v of voters || []) {
           await createNotification(v.voter_id, '🗳️ Election Started!', `Election "${election.title}" has started. Your secret code: ${v.secret_code}. Visit VoteSecure to vote!`, 'success');
         }
       }
       if (newStatus === 'completed') {
-        // Calculate winner
         const { data: cands } = await supabase.from('candidates').select('*').eq('election_id', id).order('vote_count', { ascending: false });
         if (cands && cands.length > 0) {
           await supabase.from('elections').update({ winner_id: cands[0].id }).eq('id', id);
@@ -472,32 +570,52 @@ export function ElectionControl() {
 
   if (loading) return <LoadingSpinner fullPage />;
 
-  const statusFlow = { draft: { next: 'published', label: '🚀 Publish Election', cls: 'btn-primary' }, published: { next: 'active', label: '▶️ Start Election & Finalize Voters', cls: 'btn-success' }, active: { next: 'completed', label: '⏹️ End Election & Declare Winner', cls: 'btn-danger' }, completed: null };
+  const statusFlow = {
+    draft: { next: 'published', label: '🚀 Publish Election', cls: 'btn-primary' },
+    published: { next: 'active', label: '▶️ Start Election & Finalize Voters', cls: 'btn-success' },
+    active: { next: 'completed', label: '⏹️ End Election & Declare Winner', cls: 'btn-danger' },
+    completed: null
+  };
   const nextAction = statusFlow[election?.status];
+  const totalVoters = voterStats.registered + voterStats.finalized + voterStats.voted + voterStats.waitlisted;
+  const turnout = totalVoters > 0 ? Math.round(voterStats.voted / (voterStats.voted + voterStats.finalized) * 100) || 0 : 0;
 
   return (
-    <CreatorLayout>
+    <CreatorLayout sidebarOpen={sidebarOpen} onSidebarClose={onSidebarClose}>
       <div style={{ marginBottom: '24px' }}>
-        <button onClick={() => navigate('/creator')} className="btn btn-outline btn-sm" style={{ marginBottom: '8px' }}>← Back</button>
+        <button onClick={() => navigate('/creator')} className="btn btn-outline btn-sm" style={{ marginBottom: '12px' }}>← Back</button>
         <h1 style={{ fontSize: '22px', fontWeight: 700 }}>Election Control</h1>
-        <p style={{ color: 'var(--text2)' }}>{election?.title}</p>
+        <p style={{ color: 'var(--text2)', marginTop: '3px' }}>{election?.title}</p>
       </div>
-      <div style={{ maxWidth: '640px' }}>
+      <div style={{ maxWidth: '680px' }}>
+        {/* Status card */}
         <div className="card" style={{ marginBottom: '20px' }}>
-          <h3 style={{ marginBottom: '16px' }}>Status</h3>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'var(--bg3)', borderRadius: '8px', marginBottom: '20px' }}>
-            <div><p style={{ fontSize: '13px', color: 'var(--text2)', marginBottom: '4px' }}>Current Status</p><span className={`badge badge-${election?.status}`} style={{ fontSize: '13px', padding: '5px 12px' }}>{election?.status}</span></div>
-            <div style={{ textAlign: 'right' }}><p style={{ fontSize: '13px', color: 'var(--text2)', marginBottom: '4px' }}>Voter Lock</p><span style={{ fontWeight: 600 }}>{election?.is_locked ? '🔒 Locked' : '🔓 Open'}</span></div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+            <h3>Status Management</h3>
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <span className={`badge badge-${election?.status}`} style={{ fontSize: '13px', padding: '5px 12px' }}>{election?.status?.toUpperCase()}</span>
+              <span style={{ fontWeight: 600, fontSize: '14px' }}>{election?.is_locked ? '🔒 Locked' : '🔓 Open'}</span>
+            </div>
           </div>
 
-          <div className="grid-3" style={{ marginBottom: '20px' }}>
-            {[{ label: 'Registered', value: voterStats.registered, color: 'var(--accent)' }, { label: 'Finalized', value: voterStats.finalized, color: 'var(--success)' }, { label: 'Voted', value: voterStats.voted, color: 'var(--accent2)' }]
-              .map(s => <div key={s.label} style={{ textAlign: 'center', padding: '12px', background: 'var(--bg3)', borderRadius: '8px' }}><div style={{ fontSize: '24px', fontWeight: 700, color: s.color }}>{s.value}</div><div style={{ fontSize: '12px', color: 'var(--text2)' }}>{s.label}</div></div>)}
+          <div className="grid-4" style={{ marginBottom: '20px', gap: '12px' }}>
+            {[
+              { label: 'Registered', value: voterStats.registered, color: 'var(--accent)', icon: '📝' },
+              { label: 'Finalized', value: voterStats.finalized, color: 'var(--success)', icon: '✅' },
+              { label: 'Voted', value: voterStats.voted, color: 'var(--accent2)', icon: '🗳️' },
+              { label: 'Turnout', value: `${turnout}%`, color: voterStats.voted > 0 ? 'var(--warning)' : 'var(--text3)', icon: '📊' },
+            ].map(s => (
+              <div key={s.label} style={{ textAlign: 'center', padding: '14px', background: 'var(--bg3)', borderRadius: '10px', border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: '20px', marginBottom: '6px' }}>{s.icon}</div>
+                <div style={{ fontSize: '22px', fontWeight: 700, color: s.color, fontFamily: 'Space Grotesk' }}>{s.value}</div>
+                <div style={{ fontSize: '11px', color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: '4px' }}>{s.label}</div>
+              </div>
+            ))}
           </div>
 
           {election?.status === 'published' && (
             <div className="alert alert-info" style={{ marginBottom: '16px' }}>
-              ℹ️ Starting the election will <strong>finalize all registered voters</strong> and send them secret voting codes automatically.
+              ℹ️ Starting the election will <strong>finalize all registered voters</strong> and send them secret voting codes.
             </div>
           )}
           {election?.status === 'active' && (
@@ -512,18 +630,27 @@ export function ElectionControl() {
             </button>
           ) : (
             <div className="alert alert-success">
-              ✅ Election completed!
-              <button className="btn btn-outline btn-sm" style={{ marginLeft: '12px' }} onClick={() => navigate(`/results/${id}`)}>View Results →</button>
+              🏆 Election completed! Results are available.
+              <button className="btn btn-outline btn-sm" style={{ marginLeft: '12px' }} onClick={() => navigate(`/results/${id}`)}>
+                View Results →
+              </button>
             </div>
           )}
         </div>
 
+        {/* Quick links */}
         <div className="card">
-          <h3 style={{ marginBottom: '12px' }}>Quick Links</h3>
+          <h3 style={{ marginBottom: '14px' }}>Quick Links</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <button onClick={() => navigate(`/creator/election/${id}/candidates`)} className="btn btn-outline" style={{ justifyContent: 'space-between' }}>Manage Candidates →</button>
-            <button onClick={() => navigate(`/creator/election/${id}/voters`)} className="btn btn-outline" style={{ justifyContent: 'space-between' }}>View Voter List →</button>
-            <button onClick={() => navigate(`/results/${id}`)} className="btn btn-outline" style={{ justifyContent: 'space-between' }}>Live Results →</button>
+            <button onClick={() => navigate(`/creator/election/${id}/candidates`)} className="btn btn-outline" style={{ justifyContent: 'space-between' }}>
+              <span>👥 Manage Candidates</span> <span style={{ color: 'var(--text3)' }}>→</span>
+            </button>
+            <button onClick={() => navigate(`/creator/election/${id}/voters`)} className="btn btn-outline" style={{ justifyContent: 'space-between' }}>
+              <span>📋 View Voter List & Session IDs</span> <span style={{ color: 'var(--text3)' }}>→</span>
+            </button>
+            <button onClick={() => navigate(`/results/${id}`)} className="btn btn-outline" style={{ justifyContent: 'space-between' }}>
+              <span>📊 Live Results</span> <span style={{ color: 'var(--text3)' }}>→</span>
+            </button>
           </div>
         </div>
       </div>

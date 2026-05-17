@@ -142,3 +142,30 @@ Then: Vercel → Import repo → Add env variables → Deploy ✅
 - [x] **Security 20%** – RLS, anonymous voting, role-based access, audit logs
 - [x] **Deployment 15%** – Vercel + GitHub ready
 - [x] **Presentation 15%** – Live demo ready with test data
+
+## ✨ V3 Enhancements
+
+### 🔑 Session-based User IDs
+- Every login generates a unique Session ID formatted as `VS-XXXXXXXX`
+- Displayed prominently in the Voter Dashboard and during voting
+- Shown in the navbar user dropdown menu
+- **Candidates & creators can see Session IDs** of voters who have cast votes (Voter List page)
+- IDs are different each session for privacy
+
+### 🎨 UI Improvements
+- Glassmorphism navbar with backdrop blur
+- Smooth dark/light mode toggle (⚙️ in navbar)
+- Fully responsive — works on mobile, tablet, laptop
+- Mobile sidebar drawer with overlay
+- Polished stat cards with hover effects
+- Improved form inputs with show/hide password
+- Better tables with search + filter in Voter List
+- Enhanced loading states
+- Voter turnout % in Election Control
+
+### 🗳️ Voter List Enhancements
+- Search voters by name or email
+- Filter by status (all / registered / finalized / voted / waitlisted)
+- Session User ID shown for voters who have voted
+- Voted timestamp column
+

@@ -6,17 +6,17 @@ import { useAuth } from '../../hooks/useAuth';
 import { Sidebar, adminLinks } from '../../components/shared/Sidebar';
 import LoadingSpinner from '../../components/shared/LoadingSpinner';
 
-function AdminLayout({ children }) {
+function AdminLayout({ children, sidebarOpen, onSidebarClose }) {
   return (
     <div className="dashboard-layout">
-      <Sidebar links={adminLinks} title="Admin Panel" />
+      <Sidebar links={adminLinks} title="Admin Panel" mobileOpen={sidebarOpen} onClose={onSidebarClose} />
       <div className="dashboard-content">{children}</div>
     </div>
   );
 }
 
 // ─── ADMIN DASHBOARD ───────────────────────────────────────────────────────────
-export function AdminDashboard() {
+export function AdminDashboard({ sidebarOpen, onSidebarClose }) {
   const [stats, setStats] = useState({ elections: 0, active: 0, users: 0, pending: 0, votes: 0, completed: 0 });
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export function AdminDashboard() {
   }, []);
 
   return (
-    <AdminLayout>
+    <AdminLayout sidebarOpen={sidebarOpen} onSidebarClose={onSidebarClose}>
       <div className="page-header"><h1>Admin Dashboard</h1><p>System overview and management</p></div>
       <div className="grid-4" style={{ marginBottom: '32px' }}>
         {[
@@ -77,7 +77,7 @@ export function AdminDashboard() {
 }
 
 // ─── ADMIN REQUESTS ────────────────────────────────────────────────────────────
-export function AdminRequests() {
+export function AdminRequests({ sidebarOpen, onSidebarClose }) {
   const { user, profile } = useAuth();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -118,7 +118,7 @@ export function AdminRequests() {
   }
 
   return (
-    <AdminLayout>
+    <AdminLayout sidebarOpen={sidebarOpen} onSidebarClose={onSidebarClose}>
       <div className="page-header"><h1>Creator Requests</h1><p>Review and approve election creator applications</p></div>
       {loading ? <LoadingSpinner /> : (
         <div className="card">
@@ -175,7 +175,7 @@ export function AdminRequests() {
 }
 
 // ─── ADMIN ELECTIONS ──────────────────────────────────────────────────────────
-export function AdminElections() {
+export function AdminElections({ sidebarOpen, onSidebarClose }) {
   const [elections, setElections] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -185,7 +185,7 @@ export function AdminElections() {
   }, []);
 
   return (
-    <AdminLayout>
+    <AdminLayout sidebarOpen={sidebarOpen} onSidebarClose={onSidebarClose}>
       <div className="page-header"><h1>All Elections</h1><p>Monitor and manage all elections on the platform</p></div>
       {loading ? <LoadingSpinner /> : (
         <div className="card">
@@ -214,7 +214,7 @@ export function AdminElections() {
 }
 
 // ─── ADMIN USERS ──────────────────────────────────────────────────────────────
-export function AdminUsers() {
+export function AdminUsers({ sidebarOpen, onSidebarClose }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -224,7 +224,7 @@ export function AdminUsers() {
   }, []);
 
   return (
-    <AdminLayout>
+    <AdminLayout sidebarOpen={sidebarOpen} onSidebarClose={onSidebarClose}>
       <div className="page-header"><h1>Users</h1><p>All registered users on the platform</p></div>
       {loading ? <LoadingSpinner /> : (
         <div className="card">
@@ -251,7 +251,7 @@ export function AdminUsers() {
 }
 
 // ─── AUDIT LOGS ───────────────────────────────────────────────────────────────
-export function AuditLogs() {
+export function AuditLogs({ sidebarOpen, onSidebarClose }) {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('');
@@ -279,7 +279,7 @@ export function AuditLogs() {
   }
 
   return (
-    <AdminLayout>
+    <AdminLayout sidebarOpen={sidebarOpen} onSidebarClose={onSidebarClose}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
         <div className="page-header" style={{ marginBottom: 0 }}><h1>Audit Logs</h1><p>Complete activity log for transparency</p></div>
         <div style={{ display: 'flex', gap: '8px' }}>
