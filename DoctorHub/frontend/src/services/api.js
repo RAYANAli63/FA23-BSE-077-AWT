@@ -1,319 +1,213 @@
-import { supabase } from '../lib/supabase';
+import { supabase } from './supabase';
 
-// ─────────────────────────────────────────────────────────
-// HELPERS
-// ─────────────────────────────────────────────────────────
-const throwIfError = (error) => {
-  if (error) throw new Error(error.message);
+// ── Auth ────────────────────────────────────────────────────
+export const registerUser = async (formData) => {
+  const { data, error } = await supabase.auth.signUp({
+    email: formData.email,
+    password: formData.password,
+    options: {
+      data: {
+        name: formData.name,
+        role: formData.role || 'patient',
+        specialization: formData.specialization || null,
+        treatment_type: formData.treatmentType || null,
+      }
+    }
+  });
+  if (error) throw { response: { data: { message: error.message } } };
+  return { data };
 };
 
-// ─────────────────────────────────────────────────────────
-// AUTH
-// ─────────────────────────────────────────────────────────
+export const loginUser = async (formData) => {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: formData.email,
+    password: formData.password,
+  });
+  if (error) throw { response: { data: { message: error.message } } };
+
+  // Get profile
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', data.user.id)
+    .single();
+
+  return { data: { token: data.session.access_token, user: profile } };
+};
+
 export const getMe = async () => {
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Not authenticated');
-  const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-  throwIfError(error);
+  if (!user) throw { response: { data: { message: 'Not authenticated' } } };
+  const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
   return { data: { user: data } };
 };
 
-// Staff creation goes through backend (needs service role)
-export const createStaff = async (payload) => {
-  const res = await fetch(`${process.env.REACT_APP_API_URL}/auth/create-staff`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
-    },
-    body: JSON.stringify(payload),
+export const createStaff = async (formData) => {
+  const { data, error } = await supabase.auth.signUp({
+    email: formData.email,
+    password: formData.password,
+    options: {
+      data: {
+        name: formData.name,
+        role: formData.role,
+        specialization: formData.specialization || null,
+        treatment_type: formData.treatmentType || null,
+      }
+    }
   });
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.message || 'Failed to create staff');
-  }
-  return res.json();
+  if (error) throw { response: { data: { message: error.message } } };
+  return { data };
 };
 
-// ─────────────────────────────────────────────────────────
-// DOCTORS
-// ─────────────────────────────────────────────────────────
-export const getDoctors = async (params = {}) => {
-  const { treatmentType, disease, city, search, page = 1, limit = 10 } = params;
+// ── Doctors ─────────────────────────────────────────────────
+export const getDoctors = async ({ treatmentType, disease, city, search, page = 1, limit = 9 } = {}) => {
   const from = (page - 1) * limit;
-  const to = from + limit - 1;
 
   let query = supabase
-    .from('doctors')
-    .select(`
-      id, specialization, treatment_type, diseases, experience,
-      qualification, bio, is_verified, rating, total_reviews,
-      available_days, consultation_fee, created_at,
-      user:profiles!doctors_user_id_fkey(id, name, email, phone, avatar_url),
-      clinics(id, name, address, city, timings, fee)
-    `, { count: 'exact' })
+    .from('doctor_profiles')
+    .select('*', { count: 'exact' })
     .eq('is_verified', true)
-    .range(from, to)
-    .order('rating', { ascending: false });
+    .eq('is_active', true)
+    .order('rating', { ascending: false })
+    .range(from, from + limit - 1);
 
   if (treatmentType) query = query.eq('treatment_type', treatmentType);
   if (disease) query = query.contains('diseases', [disease]);
 
   const { data, error, count } = await query;
-  throwIfError(error);
+  if (error) throw { response: { data: { message: error.message } } };
 
   let doctors = data || [];
-
-  // Client-side filter for city / search (after fetch)
-  if (city) {
-    doctors = doctors.filter(d =>
-      d.clinics?.some(c => c.city?.toLowerCase().includes(city.toLowerCase()))
-    );
-  }
+  if (city) doctors = doctors.filter(d => d.clinics?.some(c => c.city?.toLowerCase().includes(city.toLowerCase())));
   if (search) {
-    const re = new RegExp(search, 'i');
-    doctors = doctors.filter(d => re.test(d.user?.name) || re.test(d.specialization));
+    const rx = new RegExp(search, 'i');
+    doctors = doctors.filter(d => rx.test(d.name) || rx.test(d.specialization));
   }
 
-  return {
-    data: {
-      doctors,
-      total: count,
-      totalPages: Math.ceil((count || 0) / limit),
-      currentPage: page,
-    }
-  };
+  return { data: { doctors, total: count, totalPages: Math.ceil((count || 0) / limit), currentPage: page } };
 };
 
 export const getDoctorById = async (id) => {
-  const { data, error } = await supabase
-    .from('doctors')
-    .select(`
-      *,
-      user:profiles!doctors_user_id_fkey(id, name, email, phone, avatar_url),
-      clinics(*),
-      doctor_assistants(assistant:profiles!doctor_assistants_assistant_id_fkey(id, name, email, phone))
-    `)
-    .eq('id', id)
-    .single();
-  throwIfError(error);
+  const { data, error } = await supabase.from('doctor_profiles').select('*').eq('doctor_id', id).single();
+  if (error) throw { response: { data: { message: error.message } } };
   return { data: { doctor: data } };
 };
 
 export const getMyDoctorProfile = async () => {
   const { data: { user } } = await supabase.auth.getUser();
-  const { data, error } = await supabase
-    .from('doctors')
-    .select(`
-      *,
-      user:profiles!doctors_user_id_fkey(id, name, email, phone, avatar_url),
-      clinics(*),
-      doctor_assistants(assistant:profiles!doctor_assistants_assistant_id_fkey(id, name, email))
-    `)
-    .eq('user_id', user.id)
-    .single();
-  throwIfError(error);
+  const { data, error } = await supabase.from('doctor_profiles').select('*').eq('user_id', user.id).single();
+  if (error) throw { response: { data: { message: error.message } } };
   return { data: { doctor: data } };
 };
 
-export const updateDoctorProfile = async (payload) => {
+export const updateDoctorProfile = async (updates) => {
   const { data: { user } } = await supabase.auth.getUser();
-  const { data, error } = await supabase
-    .from('doctors')
-    .update({
-      specialization: payload.specialization,
-      treatment_type: payload.treatmentType || payload.treatment_type,
-      diseases: payload.diseases,
-      experience: payload.experience,
-      qualification: payload.qualification,
-      bio: payload.bio,
-      available_days: payload.availableDays || payload.available_days,
-      consultation_fee: payload.consultationFee || payload.consultation_fee,
-    })
-    .eq('user_id', user.id)
-    .select()
-    .single();
-  throwIfError(error);
-  return { data: { doctor: data } };
-};
-
-export const addClinic = async (payload) => {
-  const { data: { user } } = await supabase.auth.getUser();
-  // Get doctor id first
   const { data: doc } = await supabase.from('doctors').select('id').eq('user_id', user.id).single();
-  const { data, error } = await supabase
-    .from('clinics')
-    .insert({ ...payload, doctor_id: doc.id })
-    .select()
-    .single();
-  throwIfError(error);
-  return { data: { clinic: data } };
-};
-
-export const verifyDoctor = async (id, payload) => {
-  const { data, error } = await supabase
-    .from('doctors')
-    .update({ is_verified: payload.isVerified })
-    .eq('id', id)
-    .select()
-    .single();
-  throwIfError(error);
+  const { data, error } = await supabase.from('doctors').update(updates).eq('id', doc.id).select().single();
+  if (error) throw { response: { data: { message: error.message } } };
   return { data: { doctor: data } };
 };
 
-// ─────────────────────────────────────────────────────────
-// APPOINTMENTS
-// ─────────────────────────────────────────────────────────
-export const bookAppointment = async (payload) => {
+export const addClinic = async (clinicData) => {
   const { data: { user } } = await supabase.auth.getUser();
-  const { doctorId, appointmentDate, timeSlot, symptoms, clinicIndex } = payload;
+  const { data: doc } = await supabase.from('doctors').select('id').eq('user_id', user.id).single();
+  const { data, error } = await supabase.from('clinics').insert({ doctor_id: doc.id, ...clinicData }).select().single();
+  if (error) throw { response: { data: { message: error.message } } };
+  return { data };
+};
 
-  // Get doctor profile + clinic info
-  const { data: doc } = await supabase
-    .from('doctors')
-    .select('*, clinics(*), user_id')
-    .eq('id', doctorId)
-    .single();
+export const verifyDoctor = async (doctorId, { isVerified }) => {
+  const { data, error } = await supabase.from('doctors').update({ is_verified: isVerified }).eq('id', doctorId).select().single();
+  if (error) throw { response: { data: { message: error.message } } };
+  return { data };
+};
 
-  const clinic = doc?.clinics?.[clinicIndex || 0] || {};
-  const fee = clinic.fee || doc?.consultation_fee || 0;
+// ── Appointments ─────────────────────────────────────────────
+export const bookAppointment = async ({ doctorId, appointmentDate, timeSlot, symptoms, clinicIndex }) => {
+  const { data: { user } } = await supabase.auth.getUser();
 
-  const { data, error } = await supabase
-    .from('appointments')
-    .insert({
-      patient_id: user.id,
-      doctor_id: doc.user_id,
-      doctor_profile_id: doctorId,
-      clinic_id: clinic.id || null,
-      clinic_name: clinic.name || '',
-      clinic_address: clinic.address || '',
-      clinic_city: clinic.city || '',
-      appointment_date: new Date(appointmentDate).toISOString(),
-      time_slot: timeSlot,
-      symptoms: symptoms || '',
-      fee,
-      status: 'payment_pending',
-    })
-    .select(`
-      *,
-      doctor:profiles!appointments_doctor_id_fkey(id, name, email, phone, avatar_url),
-      doctor_profile:doctors!appointments_doctor_profile_id_fkey(specialization, treatment_type)
-    `)
-    .single();
-  throwIfError(error);
+  // Get doctor profile
+  const { data: doc } = await supabase.from('doctors').select('id, user_id, clinics(*)').eq('id', doctorId).single();
+  if (!doc) throw { response: { data: { message: 'Doctor not found' } } };
+
+  const clinic = doc.clinics?.[clinicIndex || 0];
+
+  const { data, error } = await supabase.from('appointments').insert({
+    patient_id: user.id,
+    doctor_id: doc.user_id,
+    doctor_profile_id: doc.id,
+    clinic_id: clinic?.id || null,
+    appointment_date: appointmentDate,
+    time_slot: timeSlot,
+    symptoms: symptoms || null,
+    fee: clinic?.fee || 0,
+    status: 'payment_pending',
+  }).select().single();
+
+  if (error) throw { response: { data: { message: error.message } } };
   return { data: { appointment: data } };
 };
 
 export const getMyAppointments = async () => {
   const { data: { user } } = await supabase.auth.getUser();
   const { data, error } = await supabase
-    .from('appointments')
-    .select(`
-      *,
-      doctor:profiles!appointments_doctor_id_fkey(id, name, email, phone, avatar_url),
-      doctor_profile:doctors!appointments_doctor_profile_id_fkey(id, specialization, treatment_type)
-    `)
+    .from('appointment_details')
+    .select('*')
     .eq('patient_id', user.id)
     .order('created_at', { ascending: false });
-  throwIfError(error);
+  if (error) throw { response: { data: { message: error.message } } };
   return { data: { appointments: data || [] } };
 };
 
 export const getDoctorAppointments = async (params = {}) => {
   const { data: { user } } = await supabase.auth.getUser();
-  const { status } = params;
-  let query = supabase
-    .from('appointments')
-    .select(`
-      *,
-      patient:profiles!appointments_patient_id_fkey(id, name, email, phone, avatar_url)
-    `)
-    .eq('doctor_id', user.id)
-    .order('appointment_date', { ascending: true });
-
-  if (status) query = query.eq('status', status);
-
+  let query = supabase.from('appointment_details').select('*').eq('doctor_id', user.id).order('appointment_date');
+  if (params.status) query = query.eq('status', params.status);
   const { data, error } = await query;
-  throwIfError(error);
+  if (error) throw { response: { data: { message: error.message } } };
   return { data: { appointments: data || [] } };
 };
 
 export const getPendingAppointments = async () => {
   const { data, error } = await supabase
-    .from('appointments')
-    .select(`
-      *,
-      patient:profiles!appointments_patient_id_fkey(id, name, email, phone),
-      doctor:profiles!appointments_doctor_id_fkey(id, name, email, phone)
-    `)
-    .eq('status', 'payment_uploaded')
-    .order('created_at', { ascending: false });
-  throwIfError(error);
+    .from('appointment_details').select('*').eq('status', 'payment_uploaded').order('created_at', { ascending: false });
+  if (error) throw { response: { data: { message: error.message } } };
   return { data: { appointments: data || [] } };
 };
 
 export const getAllAppointments = async (params = {}) => {
   const { status, page = 1, limit = 20 } = params;
   const from = (page - 1) * limit;
-  const to = from + limit - 1;
-
-  let query = supabase
-    .from('appointments')
-    .select(`
-      *,
-      patient:profiles!appointments_patient_id_fkey(id, name, email),
-      doctor:profiles!appointments_doctor_id_fkey(id, name, email)
-    `, { count: 'exact' })
-    .range(from, to)
-    .order('created_at', { ascending: false });
-
+  let query = supabase.from('appointment_details').select('*', { count: 'exact' })
+    .order('created_at', { ascending: false }).range(from, from + limit - 1);
   if (status) query = query.eq('status', status);
-
   const { data, error, count } = await query;
-  throwIfError(error);
+  if (error) throw { response: { data: { message: error.message } } };
   return { data: { appointments: data || [], total: count } };
 };
 
 export const confirmAppointment = async (id) => {
   const { data: { user } } = await supabase.auth.getUser();
-  const { data, error } = await supabase
-    .from('appointments')
+  const { data, error } = await supabase.from('appointments')
     .update({ status: 'confirmed', verified_by: user.id, verified_at: new Date().toISOString() })
-    .eq('id', id)
-    .select()
-    .single();
-  throwIfError(error);
+    .eq('id', id).select().single();
+  if (error) throw { response: { data: { message: error.message } } };
   return { data: { appointment: data } };
 };
 
 export const cancelAppointment = async (id) => {
-  const { data, error } = await supabase
-    .from('appointments')
-    .update({ status: 'cancelled' })
-    .eq('id', id)
-    .select()
-    .single();
-  throwIfError(error);
+  const { data, error } = await supabase.from('appointments').update({ status: 'cancelled' }).eq('id', id).select().single();
+  if (error) throw { response: { data: { message: error.message } } };
   return { data: { appointment: data } };
 };
 
 export const completeAppointment = async (id) => {
-  const { data: { user } } = await supabase.auth.getUser();
-  const { data, error } = await supabase
-    .from('appointments')
-    .update({ status: 'completed' })
-    .eq('id', id)
-    .eq('doctor_id', user.id)
-    .eq('status', 'confirmed')
-    .select()
-    .single();
-  throwIfError(error);
+  const { data, error } = await supabase.from('appointments').update({ status: 'completed' }).eq('id', id).select().single();
+  if (error) throw { response: { data: { message: error.message } } };
   return { data: { appointment: data } };
 };
 
-// ─────────────────────────────────────────────────────────
-// PAYMENTS
-// ─────────────────────────────────────────────────────────
+// ── Payments ─────────────────────────────────────────────────
 export const uploadPayment = async (formData) => {
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -321,344 +215,206 @@ export const uploadPayment = async (formData) => {
   const method = formData.get('method');
   const transactionId = formData.get('transactionId');
   const amount = formData.get('amount');
-  const screenshotFile = formData.get('screenshot');
+  const screenshot = formData.get('screenshot');
 
-  // Upload screenshot to Supabase Storage
-  let screenshotUrl = null;
-  if (screenshotFile && screenshotFile.size > 0) {
-    const ext = screenshotFile.name.split('.').pop();
+  let screenshot_url = null;
+  if (screenshot && screenshot.size > 0) {
+    const ext = screenshot.name.split('.').pop();
     const path = `${user.id}/${appointmentId}.${ext}`;
-    const { error: uploadError } = await supabase.storage
-      .from('payment-screenshots')
-      .upload(path, screenshotFile, { upsert: true });
-    if (uploadError) throw new Error(uploadError.message);
-
-    const { data: urlData } = supabase.storage
-      .from('payment-screenshots')
-      .getPublicUrl(path);
-    screenshotUrl = urlData.publicUrl;
+    const { error: uploadErr } = await supabase.storage.from('payment-screenshots').upload(path, screenshot, { upsert: true });
+    if (!uploadErr) {
+      const { data: urlData } = supabase.storage.from('payment-screenshots').getPublicUrl(path);
+      screenshot_url = urlData.publicUrl;
+    }
   }
 
-  // Delete old pending payments for this appointment
-  await supabase.from('payments')
-    .delete()
-    .eq('appointment_id', appointmentId)
-    .eq('status', 'pending');
+  // Remove old pending payment
+  await supabase.from('payments').delete().eq('appointment_id', appointmentId).eq('status', 'pending');
 
-  const { data, error } = await supabase
-    .from('payments')
-    .insert({
-      appointment_id: appointmentId,
-      patient_id: user.id,
-      amount: Number(amount) || 0,
-      method,
-      transaction_id: transactionId || '',
-      screenshot_url: screenshotUrl,
-      status: 'pending',
-    })
-    .select()
-    .single();
-  throwIfError(error);
+  const { data, error } = await supabase.from('payments').insert({
+    appointment_id: appointmentId,
+    patient_id: user.id,
+    amount: Number(amount),
+    method,
+    transaction_id: transactionId || null,
+    screenshot_url,
+    status: 'pending',
+  }).select().single();
 
-  // Update appointment status
-  await supabase.from('appointments')
-    .update({ status: 'payment_uploaded' })
-    .eq('id', appointmentId);
+  if (error) throw { response: { data: { message: error.message } } };
 
+  await supabase.from('appointments').update({ status: 'payment_uploaded' }).eq('id', appointmentId);
   return { data: { payment: data } };
 };
 
 export const getPendingPayments = async () => {
   const { data, error } = await supabase
     .from('payments')
-    .select(`
-      *,
-      patient:profiles!payments_patient_id_fkey(id, name, email, phone),
-      appointment:appointments!payments_appointment_id_fkey(
-        *,
-        doctor:profiles!appointments_doctor_id_fkey(id, name, email),
-        doctor_profile:doctors!appointments_doctor_profile_id_fkey(specialization)
-      )
-    `)
-    .eq('status', 'pending')
-    .order('created_at', { ascending: false });
-  throwIfError(error);
+    .select(`*, patient:profiles!payments_patient_id_fkey(name,email,phone), appointment:appointments(appointment_date,time_slot,fee,doctor:profiles!appointments_doctor_id_fkey(name))`)
+    .eq('status', 'pending').order('created_at', { ascending: false });
+  if (error) throw { response: { data: { message: error.message } } };
   return { data: { payments: data || [] } };
 };
 
 export const getMyPayments = async () => {
   const { data: { user } } = await supabase.auth.getUser();
-  const { data, error } = await supabase
-    .from('payments')
-    .select(`
-      *,
-      appointment:appointments!payments_appointment_id_fkey(
-        *,
-        doctor:profiles!appointments_doctor_id_fkey(id, name, email)
-      )
-    `)
-    .eq('patient_id', user.id)
-    .order('created_at', { ascending: false });
-  throwIfError(error);
+  const { data, error } = await supabase.from('payments')
+    .select('*, appointment:appointments(appointment_date, time_slot)')
+    .eq('patient_id', user.id).order('created_at', { ascending: false });
+  if (error) throw { response: { data: { message: error.message } } };
   return { data: { payments: data || [] } };
 };
 
-export const verifyPayment = async (id, payload) => {
-  const { action, rejectionReason } = payload;
+export const verifyPayment = async (id, { action, rejectionReason }) => {
   const { data: { user } } = await supabase.auth.getUser();
+  const { data: pay } = await supabase.from('payments').select('appointment_id').eq('id', id).single();
 
-  const { data: payment, error: fetchErr } = await supabase
-    .from('payments').select('*').eq('id', id).single();
-  throwIfError(fetchErr);
+  const { data, error } = await supabase.from('payments').update({
+    status: action === 'verify' ? 'verified' : 'rejected',
+    verified_by: user.id,
+    verified_at: new Date().toISOString(),
+    rejection_reason: rejectionReason || null,
+  }).eq('id', id).select().single();
 
-  if (action === 'verify') {
-    const { error } = await supabase.from('payments').update({
-      status: 'verified',
-      verified_by: user.id,
-      verified_at: new Date().toISOString(),
-    }).eq('id', id);
-    throwIfError(error);
+  if (error) throw { response: { data: { message: error.message } } };
 
-    await supabase.from('appointments').update({
-      status: 'confirmed',
-      verified_by: user.id,
-      verified_at: new Date().toISOString(),
-    }).eq('id', payment.appointment_id);
+  await supabase.from('appointments').update({
+    status: action === 'verify' ? 'confirmed' : 'payment_pending',
+    verified_by: action === 'verify' ? user.id : null,
+  }).eq('id', pay.appointment_id);
 
-  } else if (action === 'reject') {
-    const { error } = await supabase.from('payments').update({
-      status: 'rejected',
-      rejection_reason: rejectionReason || 'Rejected',
-    }).eq('id', id);
-    throwIfError(error);
-
-    await supabase.from('appointments').update({
-      status: 'payment_pending',
-    }).eq('id', payment.appointment_id);
-  }
-
-  return { data: { success: true } };
+  return { data: { payment: data } };
 };
 
-// ─────────────────────────────────────────────────────────
-// MEDICAL HISTORY
-// ─────────────────────────────────────────────────────────
+// ── Medical History ──────────────────────────────────────────
 export const addMedicalHistory = async (formData) => {
   const { data: { user } } = await supabase.auth.getUser();
-
   const patientId = formData.get('patientId');
   const appointmentId = formData.get('appointmentId');
   const diagnosis = formData.get('diagnosis');
   const symptoms = formData.get('symptoms');
   const notes = formData.get('notes');
-  const reportFilesArr = formData.getAll('reportFiles');
+  const reportFiles = formData.getAll('reportFiles').filter(f => f.size > 0);
 
-  // Upload report files
   const reportUrls = [];
-  for (const file of reportFilesArr) {
-    if (file && file.size > 0) {
-      const path = `${user.id}/${Date.now()}_${file.name}`;
-      const { error: upErr } = await supabase.storage
-        .from('medical-files').upload(path, file);
-      if (!upErr) {
-        const { data: ud } = supabase.storage.from('medical-files').getPublicUrl(path);
-        reportUrls.push(ud.publicUrl);
-      }
+  for (const file of reportFiles) {
+    const path = `${patientId}/${Date.now()}-${file.name}`;
+    const { error } = await supabase.storage.from('medical-reports').upload(path, file);
+    if (!error) {
+      const { data } = supabase.storage.from('medical-reports').getPublicUrl(path);
+      reportUrls.push(data.publicUrl);
     }
   }
 
-  const symptomsArr = symptoms
-    ? symptoms.split(',').map(s => s.trim()).filter(Boolean)
-    : [];
+  const { data, error } = await supabase.from('medical_history').insert({
+    patient_id: patientId,
+    doctor_id: user.id,
+    appointment_id: appointmentId || null,
+    diagnosis,
+    symptoms: symptoms ? symptoms.split(',').map(s => s.trim()).filter(Boolean) : [],
+    notes: notes || null,
+    report_urls: reportUrls,
+  }).select(`*, doctor:profiles!medical_history_doctor_id_fkey(name,email,avatar_url), patient:profiles!medical_history_patient_id_fkey(name,email)`).single();
 
-  const { data, error } = await supabase
-    .from('medical_history')
-    .insert({
-      patient_id: patientId,
-      doctor_id: user.id,
-      appointment_id: appointmentId || null,
-      diagnosis,
-      symptoms: symptomsArr,
-      notes: notes || '',
-      report_files: reportUrls,
-    })
-    .select(`
-      *,
-      doctor:profiles!medical_history_doctor_id_fkey(id, name, email, avatar_url),
-      patient:profiles!medical_history_patient_id_fkey(id, name, email)
-    `)
-    .single();
-  throwIfError(error);
-
-  // Mark appointment completed
-  if (appointmentId) {
-    await supabase.from('appointments').update({ status: 'completed' }).eq('id', appointmentId);
-  }
-
+  if (error) throw { response: { data: { message: error.message } } };
+  if (appointmentId) await supabase.from('appointments').update({ status: 'completed' }).eq('id', appointmentId);
   return { data: { record: data } };
 };
 
 export const getMedicalHistory = async (params = {}) => {
   const { data: { user } } = await supabase.auth.getUser();
-  const { patientId } = params;
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
 
-  // Profile to check role
-  const { data: prof } = await supabase.from('profiles').select('role').eq('id', user.id).single();
-
-  let query = supabase
-    .from('medical_history')
-    .select(`
-      *,
-      doctor:profiles!medical_history_doctor_id_fkey(id, name, email, avatar_url),
-      patient:profiles!medical_history_patient_id_fkey(id, name, email)
-    `)
+  let query = supabase.from('medical_history')
+    .select(`*, doctor:profiles!medical_history_doctor_id_fkey(name,email,avatar_url), patient:profiles!medical_history_patient_id_fkey(name,email)`)
     .order('created_at', { ascending: false });
 
-  if (prof?.role === 'patient') {
-    query = query.eq('patient_id', user.id);
-  } else if (prof?.role === 'doctor') {
-    query = patientId
-      ? query.eq('patient_id', patientId).eq('doctor_id', user.id)
-      : query.eq('doctor_id', user.id);
-  } else if (patientId) {
-    query = query.eq('patient_id', patientId);
-  }
+  if (profile?.role === 'patient') query = query.eq('patient_id', user.id);
+  else if (profile?.role === 'doctor') {
+    if (params.patientId) query = query.eq('patient_id', params.patientId).eq('doctor_id', user.id);
+    else query = query.eq('doctor_id', user.id);
+  } else if (params.patientId) query = query.eq('patient_id', params.patientId);
 
   const { data, error } = await query;
-  throwIfError(error);
+  if (error) throw { response: { data: { message: error.message } } };
   return { data: { history: data || [] } };
 };
 
-export const addPrescription = async (payload) => {
+export const addPrescription = async (formData) => {
   const { data: { user } } = await supabase.auth.getUser();
-  const { patientId, appointmentId, medicines, advice, followUpDate, treatmentType } = payload;
-
-  const { data, error } = await supabase
-    .from('prescriptions')
-    .insert({
-      patient_id: patientId,
-      doctor_id: user.id,
-      appointment_id: appointmentId || null,
-      medicines: medicines || [],
-      advice: advice || '',
-      follow_up_date: followUpDate || null,
-      treatment_type: treatmentType || 'allopathic',
-    })
-    .select(`
-      *,
-      doctor:profiles!prescriptions_doctor_id_fkey(id, name, email, avatar_url),
-      patient:profiles!prescriptions_patient_id_fkey(id, name, email)
-    `)
-    .single();
-  throwIfError(error);
+  const { data, error } = await supabase.from('prescriptions').insert({
+    patient_id: formData.patientId,
+    doctor_id: user.id,
+    appointment_id: formData.appointmentId || null,
+    medicines: typeof formData.medicines === 'string' ? JSON.parse(formData.medicines) : formData.medicines,
+    advice: formData.advice || null,
+    follow_up_date: formData.followUpDate || null,
+    treatment_type: formData.treatmentType || 'allopathic',
+  }).select(`*, doctor:profiles!prescriptions_doctor_id_fkey(name,email,avatar_url), patient:profiles!prescriptions_patient_id_fkey(name,email)`).single();
+  if (error) throw { response: { data: { message: error.message } } };
   return { data: { prescription: data } };
 };
 
 export const getPrescriptions = async (params = {}) => {
   const { data: { user } } = await supabase.auth.getUser();
-  const { patientId } = params;
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
 
-  const { data: prof } = await supabase.from('profiles').select('role').eq('id', user.id).single();
-
-  let query = supabase
-    .from('prescriptions')
-    .select(`
-      *,
-      doctor:profiles!prescriptions_doctor_id_fkey(id, name, email, avatar_url),
-      patient:profiles!prescriptions_patient_id_fkey(id, name, email)
-    `)
+  let query = supabase.from('prescriptions')
+    .select(`*, doctor:profiles!prescriptions_doctor_id_fkey(name,email,avatar_url), patient:profiles!prescriptions_patient_id_fkey(name,email)`)
     .order('created_at', { ascending: false });
 
-  if (prof?.role === 'patient') {
-    query = query.eq('patient_id', user.id);
-  } else if (prof?.role === 'doctor') {
-    query = patientId
-      ? query.eq('patient_id', patientId).eq('doctor_id', user.id)
-      : query.eq('doctor_id', user.id);
-  } else if (patientId) {
-    query = query.eq('patient_id', patientId);
+  if (profile?.role === 'patient') query = query.eq('patient_id', user.id);
+  else if (profile?.role === 'doctor') {
+    if (params.patientId) query = query.eq('patient_id', params.patientId).eq('doctor_id', user.id);
+    else query = query.eq('doctor_id', user.id);
   }
 
   const { data, error } = await query;
-  throwIfError(error);
+  if (error) throw { response: { data: { message: error.message } } };
   return { data: { prescriptions: data || [] } };
 };
 
-// ─────────────────────────────────────────────────────────
-// ADMIN
-// ─────────────────────────────────────────────────────────
+// ── Admin ────────────────────────────────────────────────────
 export const getDashboardStats = async () => {
-  const [
-    { count: totalUsers },
-    { count: totalDoctors },
-    { count: totalPatients },
-    { count: totalAppointments },
-    { count: pendingAppointments },
-    { count: confirmedAppointments },
-    { count: totalPayments },
-    { count: pendingPayments },
-  ] = await Promise.all([
+  const [users, doctors, patients, appointments, pendingPay, pending, confirmed] = await Promise.all([
     supabase.from('profiles').select('*', { count: 'exact', head: true }),
     supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'doctor'),
     supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'patient'),
     supabase.from('appointments').select('*', { count: 'exact', head: true }),
+    supabase.from('payments').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
     supabase.from('appointments').select('*', { count: 'exact', head: true }).eq('status', 'payment_uploaded'),
     supabase.from('appointments').select('*', { count: 'exact', head: true }).eq('status', 'confirmed'),
-    supabase.from('payments').select('*', { count: 'exact', head: true }),
-    supabase.from('payments').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
   ]);
-
-  return {
-    data: {
-      stats: {
-        totalUsers, totalDoctors, totalPatients,
-        totalAppointments, pendingAppointments, confirmedAppointments,
-        totalPayments, pendingPayments,
-      }
-    }
-  };
+  return { data: { stats: {
+    totalUsers: users.count || 0, totalDoctors: doctors.count || 0,
+    totalPatients: patients.count || 0, totalAppointments: appointments.count || 0,
+    pendingPayments: pendingPay.count || 0, pendingAppointments: pending.count || 0,
+    confirmedAppointments: confirmed.count || 0,
+  }}};
 };
 
-export const getAllUsers = async (params = {}) => {
-  const { role, page = 1, limit = 20 } = params;
+export const getAllUsers = async ({ role, page = 1, limit = 20 } = {}) => {
   const from = (page - 1) * limit;
-  const to = from + limit - 1;
-
-  let query = supabase
-    .from('profiles')
-    .select('*', { count: 'exact' })
-    .range(from, to)
-    .order('created_at', { ascending: false });
-
+  let query = supabase.from('profiles').select('*', { count: 'exact' })
+    .order('created_at', { ascending: false }).range(from, from + limit - 1);
   if (role) query = query.eq('role', role);
-
   const { data, error, count } = await query;
-  throwIfError(error);
+  if (error) throw { response: { data: { message: error.message } } };
   return { data: { users: data || [], total: count } };
 };
 
 export const toggleUserStatus = async (id) => {
-  const { data: user } = await supabase.from('profiles').select('is_active, role').eq('id', id).single();
-  if (user?.role === 'super_admin') throw new Error('Cannot deactivate Super Admin');
-
-  const { data, error } = await supabase
-    .from('profiles')
-    .update({ is_active: !user.is_active })
-    .eq('id', id)
-    .select()
-    .single();
-  throwIfError(error);
+  const { data: current } = await supabase.from('profiles').select('is_active').eq('id', id).single();
+  const { data, error } = await supabase.from('profiles')
+    .update({ is_active: !current.is_active }).eq('id', id).select().single();
+  if (error) throw { response: { data: { message: error.message } } };
   return { data: { user: data, message: `User ${data.is_active ? 'activated' : 'deactivated'}.` } };
 };
 
 export const getUnverifiedDoctors = async () => {
-  const { data, error } = await supabase
-    .from('doctors')
-    .select(`
-      *,
-      user:profiles!doctors_user_id_fkey(id, name, email, phone)
-    `)
-    .eq('is_verified', false);
-  throwIfError(error);
+  const { data, error } = await supabase.from('doctor_profiles').select('*').eq('is_verified', false);
+  if (error) throw { response: { data: { message: error.message } } };
   return { data: { doctors: data || [] } };
 };
+
+export default { loginUser, registerUser };
