@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 const SuperAdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // eslint-disable-line no-unused-vars
   const [activeTab, setActiveTab] = useState('overview');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [createForm, setCreateForm] = useState({ name: '', email: '', password: '', role: 'doctor', phone: '', specialization: '', treatmentType: 'allopathic' });

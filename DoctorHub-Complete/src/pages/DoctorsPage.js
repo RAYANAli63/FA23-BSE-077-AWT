@@ -3,8 +3,6 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { getDoctors } from '../services/api';
 import toast from 'react-hot-toast';
 
-const TREATMENT_TYPES = ['', 'allopathic', 'homeopathic', 'herbal'];
-
 const DoctorCard = ({ doctor }) => {
   const treatmentColor = {
     allopathic: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
@@ -78,7 +76,7 @@ const DoctorCard = ({ doctor }) => {
 };
 
 const DoctorsPage = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({});
@@ -92,6 +90,7 @@ const DoctorsPage = () => {
 
   useEffect(() => {
     fetchDoctors();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
   const fetchDoctors = async () => {
