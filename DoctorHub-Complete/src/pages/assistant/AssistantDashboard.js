@@ -32,7 +32,7 @@ const AssistantDashboard = () => {
     try {
       await verifyPayment(id, { action: 'verify' });
       toast.success('Payment verified! Appointment confirmed.');
-      setPayments(prev => prev.filter(p => p._id !== id));
+      setPayments(prev => prev.filter(p => p.id !== id));
     } catch {
       toast.error('Verification failed.');
     } finally {
@@ -46,7 +46,7 @@ const AssistantDashboard = () => {
     try {
       await verifyPayment(showRejectModal, { action: 'reject', rejectionReason: rejectReason });
       toast.success('Payment rejected.');
-      setPayments(prev => prev.filter(p => p._id !== showRejectModal));
+      setPayments(prev => prev.filter(p => p.id !== showRejectModal));
       setShowRejectModal(null);
       setRejectReason('');
     } catch {
@@ -96,7 +96,7 @@ const AssistantDashboard = () => {
           ) : (
             <div className="space-y-4">
               {payments.map(payment => (
-                <div key={payment._id} className="bg-slate-800 border border-slate-700/50 rounded-xl p-5">
+                <div key={payment.id} className="bg-slate-800 border border-slate-700/50 rounded-xl p-5">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
@@ -140,14 +140,14 @@ const AssistantDashboard = () => {
 
                     <div className="flex gap-2 flex-shrink-0">
                       <button
-                        onClick={() => handleVerify(payment._id)}
-                        disabled={processing === payment._id}
+                        onClick={() => handleVerify(payment.id)}
+                        disabled={processing === payment.id}
                         className="bg-teal-500 hover:bg-teal-600 disabled:opacity-50 text-white text-sm px-4 py-2 rounded-lg transition-colors"
                       >
-                        {processing === payment._id ? '...' : '✓ Verify'}
+                        {processing === payment.id ? '...' : '✓ Verify'}
                       </button>
                       <button
-                        onClick={() => setShowRejectModal(payment._id)}
+                        onClick={() => setShowRejectModal(payment.id)}
                         className="bg-red-500/20 hover:bg-red-500/30 text-red-300 text-sm px-4 py-2 rounded-lg transition-colors border border-red-500/30"
                       >
                         ✕ Reject

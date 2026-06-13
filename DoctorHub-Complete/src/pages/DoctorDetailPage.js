@@ -107,7 +107,7 @@ const DoctorDetailPage = () => {
             )}
 
             <Link
-              to={`/book/${doctor._id}`}
+              to={`/book/${doctor.doctor_id}`}
               className="block w-full text-center bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 text-white font-semibold py-3.5 rounded-xl transition-all shadow-lg shadow-teal-500/20"
             >
               Book Appointment

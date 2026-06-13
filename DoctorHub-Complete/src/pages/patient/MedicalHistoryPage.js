@@ -59,7 +59,7 @@ const MedicalHistoryPage = () => {
           ) : (
             <div className="space-y-4">
               {history.map(record => (
-                <div key={record._id} className="bg-slate-900 border border-slate-700/50 rounded-2xl p-6">
+                <div key={record.id} className="bg-slate-900 border border-slate-700/50 rounded-2xl p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <h3 className="font-semibold text-white text-base">{record.diagnosis}</h3>
@@ -100,7 +100,7 @@ const MedicalHistoryPage = () => {
           ) : (
             <div className="space-y-4">
               {prescriptions.map(rx => (
-                <div key={rx._id} className="bg-slate-900 border border-slate-700/50 rounded-2xl p-6">
+                <div key={rx.id} className="bg-slate-900 border border-slate-700/50 rounded-2xl p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <p className="text-slate-400 text-sm">

@@ -23,7 +23,7 @@ const AddMedicalRecord = () => {
   useEffect(() => {
     getDoctorAppointments()
       .then(res => {
-        const appt = res.data.appointments?.find(a => a._id === appointmentId);
+        const appt = res.data.appointments?.find(a => a.id === appointmentId);
         if (!appt) toast.error('Appointment not found.');
         setAppointment(appt);
       })
@@ -49,7 +49,7 @@ const AddMedicalRecord = () => {
     setSubmitting(true);
     try {
       const fd = new FormData();
-      fd.append('patientId', appointment.patient?._id);
+      fd.append('patientId', appointment.patient_id);
       fd.append('appointmentId', appointmentId);
       fd.append('diagnosis', historyForm.diagnosis);
       fd.append('symptoms', historyForm.symptoms);
@@ -72,7 +72,7 @@ const AddMedicalRecord = () => {
     setSubmitting(true);
     try {
       await addPrescription({
-        patientId: appointment.patient?._id,
+        patientId: appointment.patient_id,
         appointmentId,
         medicines: rxForm.medicines.filter(m => m.name),
         advice: rxForm.advice,

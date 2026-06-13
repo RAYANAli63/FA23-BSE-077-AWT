@@ -43,7 +43,7 @@ const DoctorDashboard = () => {
     try {
       await completeAppointment(id);
       toast.success('Appointment marked as completed!');
-      setAppointments(prev => prev.map(a => a._id === id ? { ...a, status: 'completed' } : a));
+      setAppointments(prev => prev.map(a => a.id === id ? { ...a, status: 'completed' } : a));
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed.');
     } finally {
@@ -137,7 +137,7 @@ const DoctorDashboard = () => {
                 </thead>
                 <tbody className="divide-y divide-slate-700/30">
                   {filtered.map(appt => (
-                    <tr key={appt._id} className="hover:bg-slate-800/50 transition-colors">
+                    <tr key={appt.id} className="hover:bg-slate-800/50 transition-colors">
                       <td className="py-3 text-white font-medium">{appt.patient?.name || '—'}</td>
                       <td className="py-3 text-slate-300">
                         <span>{new Date(appt.appointmentDate).toLocaleDateString()}</span>
@@ -155,18 +155,18 @@ const DoctorDashboard = () => {
                         <div className="flex gap-2 flex-wrap">
                           {appt.status === 'confirmed' && (
                             <>
-                              <Link to={`/doctor/add-history/${appt._id}`}
+                              <Link to={`/doctor/add-history/${appt.id}`}
                                 className="text-xs bg-teal-500/20 hover:bg-teal-500/30 text-teal-400 px-2.5 py-1 rounded-lg transition-colors border border-teal-500/30">
                                 + Record
                               </Link>
-                              <button onClick={() => handleComplete(appt._id)} disabled={completing === appt._id}
+                              <button onClick={() => handleComplete(appt.id)} disabled={completing === appt.id}
                                 className="text-xs bg-green-500/20 hover:bg-green-500/30 text-green-400 px-2.5 py-1 rounded-lg transition-colors border border-green-500/30 disabled:opacity-50">
-                                {completing === appt._id ? '...' : '✓ Done'}
+                                {completing === appt.id ? '...' : '✓ Done'}
                               </button>
                             </>
                           )}
                           {appt.status === 'completed' && (
-                            <Link to={`/doctor/add-history/${appt._id}`}
+                            <Link to={`/doctor/add-history/${appt.id}`}
                               className="text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 px-2.5 py-1 rounded-lg transition-colors">
                               View/Add
                             </Link>

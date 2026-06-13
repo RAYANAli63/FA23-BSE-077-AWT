@@ -47,7 +47,7 @@ const SuperAdminDashboard = () => {
   const handleToggle = async (id) => {
     try {
       const { data } = await toggleUserStatus(id);
-      setUsers(prev => prev.map(u => u._id === id ? { ...u, isActive: data.user.isActive } : u));
+      setUsers(prev => prev.map(u => u.id === id ? { ...u, is_active: data.user.isActive } : u));
       toast.success(data.message);
     } catch {
       toast.error('Failed.');
@@ -131,7 +131,7 @@ const SuperAdminDashboard = () => {
                 </thead>
                 <tbody className="divide-y divide-slate-700/30">
                   {users.map(u => (
-                    <tr key={u._id} className="hover:bg-slate-800/50">
+                    <tr key={u.id} className="hover:bg-slate-800/50">
                       <td className="py-3 text-white">{u.name}</td>
                       <td className="py-3 text-slate-300 text-xs">{u.email}</td>
                       <td className="py-3">
@@ -140,18 +140,18 @@ const SuperAdminDashboard = () => {
                         </span>
                       </td>
                       <td className="py-3">
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${u.isActive ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}`}>
-                          {u.isActive ? 'Active' : 'Inactive'}
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${u.is_active ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}`}>
+                          {u.is_active ? 'Active' : 'Inactive'}
                         </span>
                       </td>
-                      <td className="py-3 text-slate-400 text-xs">{new Date(u.createdAt).toLocaleDateString()}</td>
+                      <td className="py-3 text-slate-400 text-xs">{new Date(u.created_at).toLocaleDateString()}</td>
                       <td className="py-3">
                         {u.role !== 'super_admin' && (
                           <button
-                            onClick={() => handleToggle(u._id)}
-                            className={`text-xs px-3 py-1 rounded-lg transition-colors ${u.isActive ? 'bg-red-500/20 text-red-300 hover:bg-red-500/30' : 'bg-green-500/20 text-green-300 hover:bg-green-500/30'}`}
+                            onClick={() => handleToggle(u.id)}
+                            className={`text-xs px-3 py-1 rounded-lg transition-colors ${u.is_active ? 'bg-red-500/20 text-red-300 hover:bg-red-500/30' : 'bg-green-500/20 text-green-300 hover:bg-green-500/30'}`}
                           >
-                            {u.isActive ? 'Deactivate' : 'Activate'}
+                            {u.is_active ? 'Deactivate' : 'Activate'}
                           </button>
                         )}
                       </td>

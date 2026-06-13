@@ -44,7 +44,7 @@ const BookAppointment = () => {
     setSubmitting(true);
     try {
       const fd = new FormData();
-      fd.append('appointmentId', appointment._id);
+      fd.append('appointmentId', appointment.id);
       fd.append('method', paymentForm.method);
       fd.append('transactionId', paymentForm.transactionId);
       fd.append('amount', doctor?.clinics?.[form.clinicIndex]?.fee || doctor?.consultationFee || 0);

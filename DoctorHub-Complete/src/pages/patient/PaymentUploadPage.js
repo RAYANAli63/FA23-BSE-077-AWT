@@ -14,7 +14,7 @@ const PaymentUploadPage = () => {
   useEffect(() => {
     getMyAppointments()
       .then(res => {
-        const appt = res.data.appointments?.find(a => a._id === appointmentId);
+        const appt = res.data.appointments?.find(a => a.id === appointmentId);
         if (!appt) toast.error('Appointment not found.');
         setAppointment(appt);
       })

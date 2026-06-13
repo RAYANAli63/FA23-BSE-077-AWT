@@ -59,13 +59,13 @@ const DoctorCard = ({ doctor }) => {
 
       <div className="mt-5 flex gap-3">
         <Link
-          to={`/doctors/${doctor._id}`}
+          to={`/doctors/${doctor.doctor_id}`}
           className="flex-1 text-center bg-slate-800 hover:bg-slate-700 text-white text-sm py-2.5 rounded-xl transition-colors border border-slate-600"
         >
           View Profile
         </Link>
         <Link
-          to={`/book/${doctor._id}`}
+          to={`/book/${doctor.doctor_id}`}
           className="flex-1 text-center bg-teal-500 hover:bg-teal-600 text-white text-sm py-2.5 rounded-xl transition-colors font-medium"
         >
           Book Now
@@ -187,7 +187,7 @@ const DoctorsPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {doctors.map(doc => <DoctorCard key={doc._id} doctor={doc} />)}
+            {doctors.map(doc => <DoctorCard key={doc.doctor_id} doctor={doc} />)}
           </div>
         )}
 

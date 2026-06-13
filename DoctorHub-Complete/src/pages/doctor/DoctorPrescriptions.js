@@ -53,14 +53,14 @@ const DoctorPrescriptions = () => {
             <h2 className="font-medium text-teal-300 mb-3 text-sm">📅 Confirmed Appointments — Ready to Add Records</h2>
             <div className="space-y-2">
               {completedAppointments.slice(0, 3).map(appt => (
-                <div key={appt._id} className="flex items-center justify-between bg-slate-900/50 rounded-xl px-4 py-2.5">
+                <div key={appt.id} className="flex items-center justify-between bg-slate-900/50 rounded-xl px-4 py-2.5">
                   <div>
                     <span className="text-white text-sm">{appt.patient?.name}</span>
                     <span className="text-slate-500 text-xs ml-2">
                       {new Date(appt.appointmentDate).toLocaleDateString()} · {appt.timeSlot}
                     </span>
                   </div>
-                  <Link to={`/doctor/add-history/${appt._id}`}
+                  <Link to={`/doctor/add-history/${appt.id}`}
                     className="text-xs bg-teal-500 hover:bg-teal-600 text-white px-3 py-1.5 rounded-lg transition-colors">
                     Add Record
                   </Link>
@@ -87,7 +87,7 @@ const DoctorPrescriptions = () => {
         ) : (
           <div className="space-y-4">
             {filtered.map(rx => (
-              <div key={rx._id} className="bg-slate-900 border border-slate-700/50 rounded-2xl p-6">
+              <div key={rx.id} className="bg-slate-900 border border-slate-700/50 rounded-2xl p-6">
                 <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
                   <div>
                     <div className="flex items-center gap-2">

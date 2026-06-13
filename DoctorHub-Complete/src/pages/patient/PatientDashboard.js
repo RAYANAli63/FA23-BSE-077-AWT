@@ -89,14 +89,14 @@ const PatientDashboard = () => {
             ) : (
               <div className="space-y-3">
                 {appointments.slice(0, 5).map(appt => (
-                  <div key={appt._id} className="flex items-center justify-between bg-slate-800 rounded-xl p-4">
+                  <div key={appt.id} className="flex items-center justify-between bg-slate-800 rounded-xl p-4">
                     <div>
                       <p className="text-white text-sm font-medium">{appt.doctor?.name}</p>
                       <p className="text-slate-400 text-xs mt-0.5">
                         {new Date(appt.appointmentDate).toLocaleDateString()} · {appt.timeSlot}
                       </p>
                       {appt.status === 'payment_pending' && (
-                        <Link to={`/patient/pay/${appt._id}`} className="text-xs text-amber-400 hover:text-amber-300 mt-1 block">
+                        <Link to={`/patient/pay/${appt.id}`} className="text-xs text-amber-400 hover:text-amber-300 mt-1 block">
                           ⚠️ Upload Payment →
                         </Link>
                       )}
@@ -127,10 +127,10 @@ const PatientDashboard = () => {
             ) : (
               <div className="space-y-3">
                 {history.slice(0, 5).map(record => (
-                  <div key={record._id} className="bg-slate-800 rounded-xl p-4">
+                  <div key={record.id} className="bg-slate-800 rounded-xl p-4">
                     <p className="text-white text-sm font-medium">{record.diagnosis}</p>
                     <p className="text-slate-400 text-xs mt-0.5">
-                      Dr. {record.doctor?.name} · {new Date(record.createdAt).toLocaleDateString()}
+                      Dr. {record.doctor?.name} · {new Date(record.created_at).toLocaleDateString()}
                     </p>
                   </div>
                 ))}

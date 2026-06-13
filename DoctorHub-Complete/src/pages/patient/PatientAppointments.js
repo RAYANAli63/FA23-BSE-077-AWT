@@ -40,7 +40,7 @@ const PatientAppointments = () => {
     try {
       await cancelAppointment(id);
       toast.success('Appointment cancelled.');
-      setAppointments(prev => prev.map(a => a._id === id ? { ...a, status: 'cancelled' } : a));
+      setAppointments(prev => prev.map(a => a.id === id ? { ...a, status: 'cancelled' } : a));
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to cancel.');
     } finally {
@@ -94,7 +94,7 @@ const PatientAppointments = () => {
         ) : (
           <div className="space-y-4">
             {filtered.map(appt => (
-              <div key={appt._id} className="bg-slate-900 border border-slate-700/50 rounded-2xl p-6 hover:border-slate-600 transition-colors">
+              <div key={appt.id} className="bg-slate-900 border border-slate-700/50 rounded-2xl p-6 hover:border-slate-600 transition-colors">
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-gradient-to-br from-teal-400 to-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
@@ -122,7 +122,7 @@ const PatientAppointments = () => {
                     <div className="flex gap-2">
                       {appt.status === 'payment_pending' && (
                         <Link
-                          to={`/patient/pay/${appt._id}`}
+                          to={`/patient/pay/${appt.id}`}
                           className="text-xs bg-teal-500 hover:bg-teal-600 text-white px-3 py-1.5 rounded-lg transition-colors"
                         >
                           Upload Payment
@@ -130,11 +130,11 @@ const PatientAppointments = () => {
                       )}
                       {['pending', 'payment_pending', 'payment_uploaded'].includes(appt.status) && (
                         <button
-                          onClick={() => handleCancel(appt._id)}
-                          disabled={cancelling === appt._id}
+                          onClick={() => handleCancel(appt.id)}
+                          disabled={cancelling === appt.id}
                           className="text-xs bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
                         >
-                          {cancelling === appt._id ? 'Cancelling...' : 'Cancel'}
+                          {cancelling === appt.id ? 'Cancelling...' : 'Cancel'}
                         </button>
                       )}
                     </div>
