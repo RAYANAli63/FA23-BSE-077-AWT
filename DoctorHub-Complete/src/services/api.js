@@ -14,7 +14,7 @@ export const registerUser = async (formData) => {
       }
     }
   });
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   return { data };
 };
 
@@ -23,7 +23,7 @@ export const loginUser = async (formData) => {
     email: formData.email,
     password: formData.password,
   });
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
 
   // Get profile
   const { data: profile } = await supabase
@@ -37,7 +37,7 @@ export const loginUser = async (formData) => {
 
 export const getMe = async () => {
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw { response: { data: { message: 'Not authenticated' } } };
+  if (!user) { const _e = new Error('Not authenticated'); _e.response = { data: { message: 'Not authenticated' } }; throw _e; }
   const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
   return { data: { user: data } };
 };
@@ -55,7 +55,7 @@ export const createStaff = async (formData) => {
       }
     }
   });
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   return { data };
 };
 
@@ -75,7 +75,7 @@ export const getDoctors = async ({ treatmentType, disease, city, search, page = 
   if (disease) query = query.contains('diseases', [disease]);
 
   const { data, error, count } = await query;
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
 
   let doctors = data || [];
   if (city) doctors = doctors.filter(d => d.clinics?.some(c => c.city?.toLowerCase().includes(city.toLowerCase())));
@@ -89,14 +89,14 @@ export const getDoctors = async ({ treatmentType, disease, city, search, page = 
 
 export const getDoctorById = async (id) => {
   const { data, error } = await supabase.from('doctor_profiles').select('*').eq('doctor_id', id).single();
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   return { data: { doctor: data } };
 };
 
 export const getMyDoctorProfile = async () => {
   const { data: { user } } = await supabase.auth.getUser();
   const { data, error } = await supabase.from('doctor_profiles').select('*').eq('user_id', user.id).single();
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   return { data: { doctor: data } };
 };
 
@@ -104,7 +104,7 @@ export const updateDoctorProfile = async (updates) => {
   const { data: { user } } = await supabase.auth.getUser();
   const { data: doc } = await supabase.from('doctors').select('id').eq('user_id', user.id).single();
   const { data, error } = await supabase.from('doctors').update(updates).eq('id', doc.id).select().single();
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   return { data: { doctor: data } };
 };
 
@@ -112,13 +112,13 @@ export const addClinic = async (clinicData) => {
   const { data: { user } } = await supabase.auth.getUser();
   const { data: doc } = await supabase.from('doctors').select('id').eq('user_id', user.id).single();
   const { data, error } = await supabase.from('clinics').insert({ doctor_id: doc.id, ...clinicData }).select().single();
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   return { data };
 };
 
 export const verifyDoctor = async (doctorId, { isVerified }) => {
   const { data, error } = await supabase.from('doctors').update({ is_verified: isVerified }).eq('id', doctorId).select().single();
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   return { data };
 };
 
@@ -128,7 +128,7 @@ export const bookAppointment = async ({ doctorId, appointmentDate, timeSlot, sym
 
   // Get doctor profile
   const { data: doc } = await supabase.from('doctors').select('id, user_id, clinics(*)').eq('id', doctorId).single();
-  if (!doc) throw { response: { data: { message: 'Doctor not found' } } };
+  if (!doc) { const _e = new Error('Doctor not found'); _e.response = { data: { message: 'Doctor not found' } }; throw _e; }
 
   const clinic = doc.clinics?.[clinicIndex || 0];
 
@@ -144,7 +144,7 @@ export const bookAppointment = async ({ doctorId, appointmentDate, timeSlot, sym
     status: 'payment_pending',
   }).select().single();
 
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   return { data: { appointment: data } };
 };
 
@@ -155,7 +155,7 @@ export const getMyAppointments = async () => {
     .select('*')
     .eq('patient_id', user.id)
     .order('created_at', { ascending: false });
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   return { data: { appointments: data || [] } };
 };
 
@@ -164,14 +164,14 @@ export const getDoctorAppointments = async (params = {}) => {
   let query = supabase.from('appointment_details').select('*').eq('doctor_id', user.id).order('appointment_date');
   if (params.status) query = query.eq('status', params.status);
   const { data, error } = await query;
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   return { data: { appointments: data || [] } };
 };
 
 export const getPendingAppointments = async () => {
   const { data, error } = await supabase
     .from('appointment_details').select('*').eq('status', 'payment_uploaded').order('created_at', { ascending: false });
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   return { data: { appointments: data || [] } };
 };
 
@@ -182,7 +182,7 @@ export const getAllAppointments = async (params = {}) => {
     .order('created_at', { ascending: false }).range(from, from + limit - 1);
   if (status) query = query.eq('status', status);
   const { data, error, count } = await query;
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   return { data: { appointments: data || [], total: count } };
 };
 
@@ -191,19 +191,19 @@ export const confirmAppointment = async (id) => {
   const { data, error } = await supabase.from('appointments')
     .update({ status: 'confirmed', verified_by: user.id, verified_at: new Date().toISOString() })
     .eq('id', id).select().single();
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   return { data: { appointment: data } };
 };
 
 export const cancelAppointment = async (id) => {
   const { data, error } = await supabase.from('appointments').update({ status: 'cancelled' }).eq('id', id).select().single();
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   return { data: { appointment: data } };
 };
 
 export const completeAppointment = async (id) => {
   const { data, error } = await supabase.from('appointments').update({ status: 'completed' }).eq('id', id).select().single();
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   return { data: { appointment: data } };
 };
 
@@ -241,7 +241,7 @@ export const uploadPayment = async (formData) => {
     status: 'pending',
   }).select().single();
 
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
 
   await supabase.from('appointments').update({ status: 'payment_uploaded' }).eq('id', appointmentId);
   return { data: { payment: data } };
@@ -252,7 +252,7 @@ export const getPendingPayments = async () => {
     .from('payments')
     .select(`*, patient:profiles!payments_patient_id_fkey(name,email,phone), appointment:appointments(appointment_date,time_slot,fee,doctor:profiles!appointments_doctor_id_fkey(name))`)
     .eq('status', 'pending').order('created_at', { ascending: false });
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   return { data: { payments: data || [] } };
 };
 
@@ -261,7 +261,7 @@ export const getMyPayments = async () => {
   const { data, error } = await supabase.from('payments')
     .select('*, appointment:appointments(appointment_date, time_slot)')
     .eq('patient_id', user.id).order('created_at', { ascending: false });
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   return { data: { payments: data || [] } };
 };
 
@@ -276,7 +276,7 @@ export const verifyPayment = async (id, { action, rejectionReason }) => {
     rejection_reason: rejectionReason || null,
   }).eq('id', id).select().single();
 
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
 
   await supabase.from('appointments').update({
     status: action === 'verify' ? 'confirmed' : 'payment_pending',
@@ -316,7 +316,7 @@ export const addMedicalHistory = async (formData) => {
     report_urls: reportUrls,
   }).select(`*, doctor:profiles!medical_history_doctor_id_fkey(name,email,avatar_url), patient:profiles!medical_history_patient_id_fkey(name,email)`).single();
 
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   if (appointmentId) await supabase.from('appointments').update({ status: 'completed' }).eq('id', appointmentId);
   return { data: { record: data } };
 };
@@ -336,7 +336,7 @@ export const getMedicalHistory = async (params = {}) => {
   } else if (params.patientId) query = query.eq('patient_id', params.patientId);
 
   const { data, error } = await query;
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   return { data: { history: data || [] } };
 };
 
@@ -351,7 +351,7 @@ export const addPrescription = async (formData) => {
     follow_up_date: formData.followUpDate || null,
     treatment_type: formData.treatmentType || 'allopathic',
   }).select(`*, doctor:profiles!prescriptions_doctor_id_fkey(name,email,avatar_url), patient:profiles!prescriptions_patient_id_fkey(name,email)`).single();
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   return { data: { prescription: data } };
 };
 
@@ -370,7 +370,7 @@ export const getPrescriptions = async (params = {}) => {
   }
 
   const { data, error } = await query;
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   return { data: { prescriptions: data || [] } };
 };
 
@@ -399,7 +399,7 @@ export const getAllUsers = async ({ role, page = 1, limit = 20 } = {}) => {
     .order('created_at', { ascending: false }).range(from, from + limit - 1);
   if (role) query = query.eq('role', role);
   const { data, error, count } = await query;
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   return { data: { users: data || [], total: count } };
 };
 
@@ -407,14 +407,15 @@ export const toggleUserStatus = async (id) => {
   const { data: current } = await supabase.from('profiles').select('is_active').eq('id', id).single();
   const { data, error } = await supabase.from('profiles')
     .update({ is_active: !current.is_active }).eq('id', id).select().single();
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   return { data: { user: data, message: `User ${data.is_active ? 'activated' : 'deactivated'}.` } };
 };
 
 export const getUnverifiedDoctors = async () => {
   const { data, error } = await supabase.from('doctor_profiles').select('*').eq('is_verified', false);
-  if (error) throw { response: { data: { message: error.message } } };
+  if (error) { const _e = new Error(error.message); _e.response = { data: { message: error.message } }; throw _e; }
   return { data: { doctors: data || [] } };
 };
 
-export default { loginUser, registerUser };
+const api = { loginUser, registerUser };
+export default api;
