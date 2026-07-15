@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rayan Ali Shah — Full Stack Web Developer</title>
+<meta name="description" content="Rayan Ali Shah is a Full Stack Web Developer building fast, reliable, production-ready web applications with React, Node.js and modern databases." />
+<meta name="keywords" content="Rayan Ali Shah, Full Stack Developer, React Developer, Node.js Developer, Web Developer Pakistan, MERN Stack Developer" />
+<meta name="author" content="Syed Muhammad Rayan Ali Shah" />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://rayanalishah.dev/" />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Rayan Ali Shah — Full Stack Web Developer" />
+<meta property="og:description" content="Turning ideas into powerful web applications. React, Node.js, MongoDB, MySQL, Laravel." />
+<meta property="og:image" content="assets/profile_square.jpg" />
+<meta property="og:url" content="https://rayanalishah.dev/" />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Rayan Ali Shah — Full Stack Web Developer" />
+<meta name="twitter:description" content="Turning ideas into powerful web applications." />
+<meta name="twitter:image" content="assets/profile_square.jpg" />
+
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<link rel="stylesheet" href="style.css">
+
+<!-- EmailJS (configure keys in script.js to activate the contact form) -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<!-- Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Syed Muhammad Rayan Ali Shah",
+  "jobTitle": "Full Stack Web Developer",
+  "url": "https://rayanalishah.dev/",
+  "email": "mailto:rayanshah701@gmail.com",
+  "sameAs": [
+    "https://github.com/RAYANAli63",
+    "https://www.linkedin.com/in/rayan-shah-3844613b5"
+  ]
+}
+</script>
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div id="loader">
+  <div class="loader-mark">
+    <span>&lt;</span><span class="loader-slash">RA</span><span>/&gt;</span>
+  </div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+</div>
+
+<!-- Scroll progress -->
+<div id="scroll-progress"></div>
+
+<!-- Custom cursor -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- Navbar -->
+<header id="navbar">
+  <nav class="nav-wrap">
+    <a href="#home" class="logo">RA<span>.</span>dev</a>
+    <ul class="nav-links">
+      <li><a href="#home" class="nav-link active" data-section="home">Home</a></li>
+      <li><a href="#about" class="nav-link" data-section="about">About</a></li>
+      <li><a href="#skills" class="nav-link" data-section="skills">Skills</a></li>
+      <li><a href="#projects" class="nav-link" data-section="projects">Projects</a></li>
+      <li><a href="#services" class="nav-link" data-section="services">Services</a></li>
+      <li><a href="#experience" class="nav-link" data-section="experience">Experience</a></li>
+      <li><a href="#contact" class="nav-link" data-section="contact">Contact</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">Hire Me</a>
+    <button id="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </nav>
+  <ul class="nav-links-mobile">
+    <li><a href="#home" class="nav-link">Home</a></li>
+    <li><a href="#about" class="nav-link">About</a></li>
+    <li><a href="#skills" class="nav-link">Skills</a></li>
+    <li><a href="#projects" class="nav-link">Projects</a></li>
+    <li><a href="#services" class="nav-link">Services</a></li>
+    <li><a href="#experience" class="nav-link">Experience</a></li>
+    <li><a href="#contact" class="nav-link">Contact</a></li>
+  </ul>
+</header>
+
+<main>
+<!-- HERO -->
+<section id="home" class="hero">
+  <div class="hero-bg">
+    <div class="grid-glow"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <canvas id="particles"></canvas>
+  </div>
+
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <p class="eyebrow"><span class="dot-live"></span> Available for freelance &amp; full-time roles</p>
+      <h1 class="hero-title">
+        <span class="line">Syed Muhammad</span>
+        <span class="line gradient-text">Rayan Ali Shah</span>
+      </h1>
+      <div class="hero-role">
+        <span class="prompt">$</span>
+        <span id="typed-role" class="typed"></span><span class="caret">|</span>
+      </div>
+      <p class="hero-tagline">Turning ideas into powerful web applications — from database schema to pixel-perfect interface.</p>
+
+      <div class="hero-actions">
+        <a href="#projects" class="btn btn-primary magnetic">View Projects</a>
+        <a href="assets/Rayan-Ali-Shah-Resume.pdf" download class="btn btn-ghost magnetic">Download Resume</a>
+        <a href="https://wa.me/923336296196?text=Hello%20Rayan%2C%20I%20found%20your%20portfolio%20and%20would%20like%20to%20discuss%20a%20project." target="_blank" rel="noopener" class="btn btn-ghost magnetic">Hire Me</a>
+      </div>
+
+      <div class="hero-socials">
+        <a href="https://github.com/RAYANAli63" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.29 9.43 7.86 10.96.57.1.79-.25.79-.55 0-.27-.01-1.16-.02-2.1-3.2.7-3.87-1.36-3.87-1.36-.53-1.34-1.28-1.7-1.28-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.24 2.76.12 3.05.74.81 1.18 1.83 1.18 3.09 0 4.41-2.69 5.39-5.25 5.67.42.36.78 1.08.78 2.17 0 1.57-.02 2.83-.02 3.22 0 .3.21.66.8.55A10.52 10.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/in/rayan-shah-3844613b5" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.15 1.45-2.15 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>
+        </a>
+        <a href="mailto:rayanshah701@gmail.com" aria-label="Email">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M2 5.5A2.5 2.5 0 0 1 4.5 3h15A2.5 2.5 0 0 1 22 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 18.5v-13Zm2.2.3 7.3 6.1a1 1 0 0 0 1 0l7.3-6.1H4.2Zm15.6 1.6-6.9 5.8a3 3 0 0 1-3.8 0L4.2 7.4V18.5c0 .17.13.3.3.3h15a.3.3 0 0 0 .3-.3V7.4Z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="photo-frame">
+        <img src="assets/profile_hero.jpg" alt="Rayan Ali Shah, Full Stack Web Developer" class="hero-photo" />
+        <div class="frame-glow"></div>
+      </div>
+      <div class="float-card card-terminal">
+        <div class="term-dots"><span></span><span></span><span></span></div>
+        <pre><code><span class="c-key">const</span> dev = {
+  <span class="c-prop">stack</span>: <span class="c-str">"MERN"</span>,
+  <span class="c-prop">based_in</span>: <span class="c-str">"Pakistan"</span>,
+  <span class="c-prop">shipping</span>: <span class="c-bool">true</span>
+};</code></pre>
+      </div>
+      <div class="float-card card-status">
+        <span class="pulse"></span>
+        <div>
+          <p class="status-title">Currently building</p>
+          <p class="status-sub">AI-Powered Smart Classroom</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <a href="#about" class="scroll-cue" aria-label="Scroll down"><span></span></a>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="section">
+  <div class="section-head">
+    <span class="tag-label">01 — About</span>
+    <h2>Engineering things that <span class="gradient-text">actually ship.</span></h2>
+  </div>
+
+  <div class="about-grid">
+    <div class="about-photo reveal-up">
+      <img src="assets/profile_square.jpg" alt="Rayan Ali Shah portrait" />
+      <div class="about-photo-glow"></div>
+    </div>
+
+    <div class="about-copy reveal-up">
+      <p>I'm a Full Stack Web Developer and Software Engineering student at COMSATS University Islamabad. I design and build complete web systems — from relational and document databases, to REST APIs, to interfaces people actually enjoy using.</p>
+      <p>My work spans healthcare platforms, restaurant management systems, election software and social applications, usually on the MERN stack, sometimes paired with Laravel and MySQL when the project calls for it. I care about clean architecture, and about a product working end-to-end, not just looking finished in a screenshot.</p>
+
+      <div class="about-facts">
+        <div class="fact">
+          <p class="fact-num">15+</p>
+          <p class="fact-label">Full-stack projects shipped</p>
+        </div>
+        <div class="fact">
+          <p class="fact-num">5</p>
+          <p class="fact-label">Production tech stacks</p>
+        </div>
+        <div class="fact">
+          <p class="fact-num">BSE</p>
+          <p class="fact-label">Software Engineering, COMSATS University Islamabad</p>
+        </div>
+      </div>
+
+      <div class="about-meta">
+        <div><span>Education</span><p>BS Software Engineering, COMSATS University Islamabad</p></div>
+        <div><span>Focus</span><p>Full Stack Web Development · REST APIs · Database Design</p></div>
+        <div><span>Currently</span><p>Building an AI-Powered Smart Classroom Platform (Final Year Project)</p></div>
+      </div>
+
+      <a href="assets/Rayan-Ali-Shah-Resume.pdf" download class="btn btn-primary magnetic">Download Resume</a>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills" class="section alt">
+  <div class="section-head">
+    <span class="tag-label">02 — Skills</span>
+    <h2>A stack built for <span class="gradient-text">real products.</span></h2>
+  </div>
+
+  <div class="skills-grid" id="skills-grid"></div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" class="section">
+  <div class="section-head">
+    <span class="tag-label">03 — Projects</span>
+    <h2>Selected <span class="gradient-text">work.</span></h2>
+    <p class="section-sub">Featured builds, plus a live feed pulled straight from my GitHub.</p>
+  </div>
+
+  <div class="featured-grid" id="featured-grid"></div>
+
+  <div class="projects-live-head">
+    <h3>Live from GitHub <span id="gh-count" class="gh-count"></span></h3>
+    <div class="projects-controls">
+      <input id="project-search" type="text" placeholder="Search repositories…" />
+      <div class="filter-chips" id="filter-chips"></div>
+    </div>
+  </div>
+
+  <div class="repo-grid" id="repo-grid">
+    <p class="repo-loading">Fetching repositories from GitHub…</p>
+  </div>
+</section>
+
+<!-- GITHUB DASHBOARD -->
+<section id="github" class="section alt">
+  <div class="section-head">
+    <span class="tag-label">04 — GitHub</span>
+    <h2>Live <span class="gradient-text">profile stats.</span></h2>
+  </div>
+  <div class="gh-dashboard" id="gh-dashboard">
+    <div class="gh-card gh-profile">
+      <img id="gh-avatar" src="" alt="GitHub avatar" />
+      <div>
+        <p id="gh-name" class="gh-name">—</p>
+        <a id="gh-login" href="https://github.com/RAYANAli63" target="_blank" rel="noopener" class="gh-login">@RAYANAli63</a>
+      </div>
+    </div>
+    <div class="gh-card"><p class="gh-num" id="gh-repos">—</p><p class="gh-label">Public Repos</p></div>
+    <div class="gh-card"><p class="gh-num" id="gh-followers">—</p><p class="gh-label">Followers</p></div>
+    <div class="gh-card"><p class="gh-num" id="gh-following">—</p><p class="gh-label">Following</p></div>
+    <div class="gh-card gh-langs">
+      <p class="gh-label">Top Languages</p>
+      <div id="gh-lang-bars" class="gh-lang-bars"></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services" class="section">
+  <div class="section-head">
+    <span class="tag-label">05 — Services</span>
+    <h2>How I can <span class="gradient-text">help.</span></h2>
+  </div>
+  <div class="services-grid" id="services-grid"></div>
+</section>
+
+<!-- EXPERIENCE TIMELINE -->
+<section id="experience" class="section alt">
+  <div class="section-head">
+    <span class="tag-label">06 — Timeline</span>
+    <h2>Path so <span class="gradient-text">far.</span></h2>
+  </div>
+  <div class="timeline" id="timeline"></div>
+</section>
+
+<!-- CERTIFICATES -->
+<section id="certificates" class="section" style="display:none;">
+  <div class="section-head">
+    <span class="tag-label">07 — Certificates</span>
+    <h2>Credentials &amp; <span class="gradient-text">certificates.</span></h2>
+  </div>
+  <div class="cert-grid" id="cert-grid"></div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="section alt">
+  <div class="section-head">
+    <span class="tag-label">08 — Contact</span>
+    <h2>Let's build <span class="gradient-text">something.</span></h2>
+    <p class="section-sub">Have a project in mind? Tell me about it — I usually reply within a day.</p>
+  </div>
+
+  <div class="contact-grid">
+    <form id="contact-form" class="contact-form" novalidate>
+      <div class="form-row">
+        <div class="field">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" required />
+          <span class="field-error" data-for="name"></span>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required />
+          <span class="field-error" data-for="email"></span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="subject">Subject</label>
+        <input type="text" id="subject" name="subject" required />
+        <span class="field-error" data-for="subject"></span>
+      </div>
+      <div class="field">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="5" required></textarea>
+        <span class="field-error" data-for="message"></span>
+      </div>
+      <button type="submit" class="btn btn-primary magnetic" id="submit-btn">
+        <span class="btn-label">Send Message</span>
+        <span class="btn-loading" hidden>Sending…</span>
+      </button>
+      <p class="form-status" id="form-status" role="status"></p>
+    </form>
+
+    <div class="contact-side">
+      <div class="contact-card">
+        <span class="contact-label">Email</span>
+        <a href="mailto:rayanshah701@gmail.com">rayanshah701@gmail.com</a>
+      </div>
+      <div class="contact-card">
+        <span class="contact-label">Phone / WhatsApp</span>
+        <a href="https://wa.me/923336296196" target="_blank" rel="noopener">+92 333 6296196</a>
+      </div>
+      <div class="contact-card">
+        <span class="contact-label">Location</span>
+        <p>Pakistan (Remote-friendly)</p>
+      </div>
+      <div class="contact-card">
+        <span class="contact-label">Elsewhere</span>
+        <div class="contact-links">
+          <a href="https://github.com/RAYANAli63" target="_blank" rel="noopener">GitHub ↗</a>
+          <a href="https://www.linkedin.com/in/rayan-shah-3844613b5" target="_blank" rel="noopener">LinkedIn ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="site-footer">
+  <p>© <span id="year"></span> Syed Muhammad Rayan Ali Shah. Built with React principles, plain HTML/CSS/JS — no bloat, fast on every device.</p>
+  <div class="footer-links">
+    <a href="https://github.com/RAYANAli63" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://www.linkedin.com/in/rayan-shah-3844613b5" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="mailto:rayanshah701@gmail.com">Email</a>
+  </div>
+</footer>
+
+<!-- WhatsApp Floating Button -->
+<a id="whatsapp-fab" href="https://wa.me/923336296196?text=Hello%20Rayan%2C%20I%20found%20your%20portfolio%20and%20would%20like%20to%20discuss%20a%20project." target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 32 32" width="28" height="28"><path fill="currentColor" d="M16.02 3C9.4 3 4.02 8.38 4.02 15c0 2.3.62 4.44 1.72 6.28L4 29l7.9-1.7A11.9 11.9 0 0 0 16.02 27C22.64 27 28 21.62 28 15S22.64 3 16.02 3Zm0 21.8a9.7 9.7 0 0 1-5.3-1.57l-.38-.24-4.68 1 1.03-4.56-.25-.4a9.7 9.7 0 1 1 9.58 5.77Zm5.36-7.27c-.29-.15-1.73-.86-2-.96-.27-.1-.47-.15-.66.15-.2.29-.76.95-.93 1.15-.17.2-.34.22-.63.07-.29-.14-1.23-.45-2.34-1.44-.87-.77-1.45-1.72-1.62-2.01-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.5.15-.18.19-.3.29-.49.1-.2.05-.37-.02-.52-.07-.15-.66-1.6-.9-2.18-.24-.58-.48-.5-.66-.5h-.56c-.2 0-.52.07-.79.37-.27.29-1.04 1.02-1.04 2.48s1.07 2.87 1.22 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.22 1.35.19 1.86.12.57-.09 1.73-.71 1.98-1.39.24-.68.24-1.26.17-1.39-.07-.12-.26-.2-.56-.35Z"/></svg>
+</a>
+
+<!-- Back to top -->
+<button id="back-to-top" aria-label="Back to top">↑</button>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>404 — Page Not Found | Rayan Ali Shah</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=Inter:wght@400;500&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#08070d;--text:#eeeef6;--muted:#9c9ab0;--blue:#4f8cff;--violet:#9b6bff;}
+  *{box-sizing:border-box;}
+  body{
+    margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:24px;
+  }
+  .code{
+    font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(70px,16vw,150px);line-height:1;
+    background:linear-gradient(100deg,var(--blue),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent;
+    margin:0;
+  }
+  p.lead{font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:15px;margin:14px 0 30px;}
+  a.home{
+    font-weight:600;padding:13px 28px;border-radius:100px;color:#fff;
+    background:linear-gradient(100deg,var(--blue),var(--violet));text-decoration:none;
+  }
+</style>
+</head>
+<body>
+  <p class="code">404</p>
+  <p class="lead">$ this route doesn't exist — but the rest of the site does.</p>
+  <a class="home" href="/">Back to home</a>
+</body>
+</html>
